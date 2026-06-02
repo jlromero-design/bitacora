@@ -1,0 +1,187 @@
+﻿
+> valejuri-web@0.1.0 dev C:\Users\Delgado Jose\Projects\bitacora-vale
+> next dev
+
+▲ Next.js 16.2.7 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.68.115:3000
+✓ Ready in 2.0s
+
+ GET /agenda 200 in 1566ms (next.js: 607ms, application-code: 958ms)
+ GET / 307 in 2.1s (next.js: 1561ms, application-code: 583ms)
+ GET /agenda 200 in 396ms (next.js: 25ms, application-code: 371ms)
+node.exe : [browser] A tree hydrated but some attributes of the server rendered HTML didn't match the client 
+properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+En C:\Users\Delgado Jose\AppData\Roaming\npm\pnpm.ps1: 24 Carácter: 5
++     & "node$exe"  "$basedir/node_modules/pnpm/bin/pnpm.cjs" $args
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([browser] A tre...Component used::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/agenda" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.tsx">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html lang="es-AR" className="geist_deef...">
+                          <body
+                            className="min-h-full"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+ 
+    at <unknown> (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:3439:25)
+    at runWithFiberInDEV (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:965:74)
+    at emitPendingHydrationWarnings (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:3438:13)
+    at completeWork (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:6885:102)
+    at runWithFiberInDEV (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:965:131)
+    at completeUnitOfWork (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:9622:23)
+    at performUnitOfWork (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:9557:28)
+    at workLoopConcurrentByScheduler (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:9551:58)
+    at renderRootConcurrent (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:9534:71)
+    at performWorkOnRoot (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:9061:150)
+    at performWorkOnRootViaSchedulerTask (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:10255:9)
+    at MessagePort.performWorkUntilDeadline (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_0y3bicz._.js:2647:64) 
+(file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:3439:25)
+ GET /finanzas 200 in 108ms (next.js: 52ms, application-code: 55ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route 
+transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: 
+https://nextjs.org/docs/messages/missing-data-scroll-behavior (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_1xno41f._.js:2477:13)
+ GET /habitos 200 in 122ms (next.js: 56ms, application-code: 66ms)
+ GET /pendientes 200 in 104ms (next.js: 56ms, application-code: 48ms)
+ GET /agenda 200 in 52ms (next.js: 6ms, application-code: 46ms)
+✓ Compiled in 150ms
+ GET /agenda 200 in 455ms (next.js: 148ms, application-code: 307ms)
+ GET /agenda 200 in 149ms (next.js: 8ms, application-code: 142ms)
+ GET /agenda 200 in 86ms (next.js: 9ms, application-code: 77ms)
+✓ Compiled in 122ms
+ GET /agenda 200 in 486ms (next.js: 175ms, application-code: 310ms)
+ GET /agenda 200 in 179ms (next.js: 13ms, application-code: 165ms)
+ GET /agenda 200 in 73ms (next.js: 7ms, application-code: 66ms)
+✓ Compiled in 211ms
+ GET /agenda 200 in 418ms (next.js: 152ms, application-code: 265ms)
+ GET /agenda 200 in 168ms (next.js: 9ms, application-code: 159ms)
+ GET /agenda 200 in 90ms (next.js: 13ms, application-code: 76ms)
+✓ Compiled in 98ms
+ GET /agenda 200 in 437ms (next.js: 183ms, application-code: 254ms)
+ GET /agenda 200 in 145ms (next.js: 11ms, application-code: 134ms)
+ GET /agenda 200 in 75ms (next.js: 7ms, application-code: 68ms)
+✓ Compiled in 160ms
+ GET /agenda 200 in 341ms (next.js: 221ms, application-code: 119ms)
+✓ Compiled in 220ms
+ GET /agenda 200 in 343ms (next.js: 216ms, application-code: 126ms)
+✓ Compiled in 117ms
+ GET /agenda 200 in 374ms (next.js: 237ms, application-code: 137ms)
+✓ Compiled in 208ms
+ GET /agenda 200 in 555ms (next.js: 284ms, application-code: 271ms)
+ GET /agenda 200 in 543ms (next.js: 11ms, application-code: 531ms)
+ GET / 307 in 253ms (next.js: 63ms, application-code: 190ms)
+ GET /agenda 200 in 128ms (next.js: 9ms, application-code: 119ms)
+[browser] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This 
+won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/agenda" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.tsx">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html lang="es-AR" className="geist_deef...">
+                          <body
+                            className="min-h-full"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+ 
+    at <unknown> (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:3439:25)
+    at runWithFiberInDEV (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:965:74)
+    at emitPendingHydrationWarnings (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:3438:13)
+    at completeWork (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:6885:102)
+    at runWithFiberInDEV (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:965:131)
+    at completeUnitOfWork (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:9622:23)
+    at performUnitOfWork (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:9557:28)
+    at workLoopConcurrentByScheduler (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:9551:58)
+    at renderRootConcurrent (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:9534:71)
+    at performWorkOnRoot (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:9061:150)
+    at performWorkOnRootViaSchedulerTask (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:10255:9)
+    at MessagePort.performWorkUntilDeadline (file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_0y3bicz._.js:2647:64) 
+(file://C:/Users/Delgado 
+Jose/Projects/bitacora-vale/.next/dev/static/chunks/1xcn_next_dist_compiled_react-dom_0l1-g-y._.js:3439:25)
+✓ Compiled in 169ms
+ GET /agenda 200 in 1349ms (next.js: 415ms, application-code: 934ms)
+ GET /agenda 200 in 582ms (next.js: 28ms, application-code: 554ms)
+ GET /agenda 200 in 366ms (next.js: 32ms, application-code: 333ms)
+ GET /agenda 200 in 358ms (next.js: 217ms, application-code: 140ms)
+ GET /agenda 200 in 367ms (next.js: 152ms, application-code: 214ms)
+ GET /agenda 200 in 354ms (next.js: 269ms, application-code: 85ms)
+ GET /agenda 200 in 253ms (next.js: 7ms, application-code: 246ms)

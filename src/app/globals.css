@@ -1,0 +1,234 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════
+   VALE JURI · Bitácora — Tema nocturno metalizado
+   Paleta sobria: navy profundo, superficies tinta, marfil,
+   latón, y acentos metálicos por grupo funcional.
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* Fondos */
+  --noche:        #0a0e1c;  /* navy casi negro — fondo base */
+  --noche-2:      #0e1424;  /* degradado superior */
+  --tinta:        #141c33;  /* superficie azul tinta */
+  --tinta-2:      #1a2440;  /* superficie elevada */
+  --tinta-3:      #232f52;  /* bordes / hover */
+
+  /* Vidrio (glass) */
+  --glass:        rgba(20, 28, 51, 0.72);
+  --glass-strong: rgba(14, 20, 36, 0.86);
+  --hairline:     rgba(201, 162, 75, 0.22);  /* borde metalizado sutil */
+  --hairline-soft:rgba(154, 167, 194, 0.14);
+
+  /* Texto */
+  --marfil:       #f1ece0;  /* texto principal */
+  --marfil-dim:   #d9d3c4;
+  --gris-azul:    #9aa7c2;  /* texto secundario */
+  --gris-azul-dim:#6c7796;  /* texto terciario / placeholder */
+
+  /* Metal latón (acento principal / agenda-destinos) */
+  --laton:        #c9a24b;
+  --laton-claro:  #e0c074;
+  --laton-tenue:  rgba(201, 162, 75, 0.16);
+
+  /* Acentos metálicos por grupo */
+  --finanzas:     #c75c6c;  /* bordo metalizado */
+  --finanzas-bg:  rgba(199, 92, 108, 0.14);
+  --habitos:      #5bb491;  /* verde metalizado */
+  --habitos-bg:   rgba(91, 180, 145, 0.14);
+  --pendientes:   #d8b04a;  /* dorado metalizado */
+  --pendientes-bg:rgba(216, 176, 74, 0.14);
+  --casa:         #6699d8;  /* azul metalizado */
+  --casa-bg:      rgba(102, 153, 216, 0.14);
+  --destinos:     #b9a06a;  /* latón neutro */
+  --destinos-bg:  rgba(185, 160, 106, 0.14);
+
+  /* Estados */
+  --ok:           #5bb491;
+  --alerta:       #d8b04a;
+  --peligro:      #c75c6c;
+
+  /* Sombras */
+  --sombra-sm: 0 1px 3px rgba(0,0,0,0.4);
+  --sombra-md: 0 8px 28px rgba(0,0,0,0.45);
+  --sombra-lg: 0 20px 60px rgba(0,0,0,0.55);
+
+  --radio-sm: 8px;
+  --radio-md: 12px;
+  --radio-lg: 18px;
+}
+
+/* Mapeo al theme de Tailwind v4 — habilita utilidades bg-*, text-*, border-* */
+@theme inline {
+  --color-noche: var(--noche);
+  --color-noche-2: var(--noche-2);
+  --color-tinta: var(--tinta);
+  --color-tinta-2: var(--tinta-2);
+  --color-tinta-3: var(--tinta-3);
+  --color-marfil: var(--marfil);
+  --color-marfil-dim: var(--marfil-dim);
+  --color-gris-azul: var(--gris-azul);
+  --color-gris-azul-dim: var(--gris-azul-dim);
+  --color-laton: var(--laton);
+  --color-laton-claro: var(--laton-claro);
+  --color-finanzas: var(--finanzas);
+  --color-habitos: var(--habitos);
+  --color-pendientes: var(--pendientes);
+  --color-casa: var(--casa);
+  --color-destinos: var(--destinos);
+  --color-ok: var(--ok);
+  --color-alerta: var(--alerta);
+  --color-peligro: var(--peligro);
+
+  --font-display: var(--font-cinzel);
+  --font-sans: var(--font-geist-sans);
+  --font-serif: var(--font-garamond);
+
+  --radius-sm: var(--radio-sm);
+  --radius-md: var(--radio-md);
+  --radius-lg: var(--radio-lg);
+}
+
+/* ── Base ── */
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(201,162,75,0.06), transparent 60%),
+    linear-gradient(180deg, var(--noche-2) 0%, var(--noche) 38%);
+  background-attachment: fixed;
+  color: var(--marfil);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.01em;
+}
+
+/* Foco visible accesible */
+:focus-visible {
+  outline: 2px solid var(--laton-claro);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Scrollbar sobrio */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--tinta-3); border-radius: 99px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--laton-tenue); }
+
+/* ── Utilidades de composición ── */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid var(--hairline-soft);
+}
+.glass-strong {
+  background: var(--glass-strong);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+}
+
+/* Superficie tipo "carta" */
+.carta {
+  background: linear-gradient(180deg, var(--tinta-2) 0%, var(--tinta) 100%);
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--radio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+/* Borde metalizado luminoso */
+.borde-metal {
+  position: relative;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--tinta), var(--tinta)) padding-box,
+    linear-gradient(135deg, rgba(224,192,116,0.5), rgba(201,162,75,0.05) 40%, rgba(154,167,194,0.18)) border-box;
+}
+
+/* Texto con leve brillo metálico para el wordmark */
+.metal-text {
+  background: linear-gradient(180deg, #f3e6c4 0%, var(--laton) 55%, #9c7d34 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Regla ornamental */
+.regla-ornamento {
+  display: flex; align-items: center; gap: 0.75rem;
+  color: var(--gris-azul-dim);
+}
+.regla-ornamento::before, .regla-ornamento::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--hairline), transparent);
+}
+
+/* Animación de entrada suave */
+@keyframes subir {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animar-subir { animation: subir 0.32s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* ── Botones metalizados (sin colores sólidos) ── */
+.btn-oro {
+  background:
+    linear-gradient(180deg, rgba(244,230,196,0.95) 0%, var(--laton) 48%, #9c7d34 100%);
+  color: #20180a;
+  border: 1px solid rgba(244,230,196,0.55);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 1px 4px rgba(0,0,0,0.35);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+}
+.btn-oro:hover { filter: brightness(1.08); }
+
+.btn-acero {
+  background: linear-gradient(180deg, var(--tinta-3) 0%, var(--tinta-2) 100%);
+  color: var(--marfil);
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  box-shadow: inset 0 1px 0 rgba(224,192,116,0.12), 0 1px 3px rgba(0,0,0,0.35);
+  position: relative;
+}
+.btn-acero::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+  background: linear-gradient(135deg, rgba(224,192,116,0.4), rgba(154,167,194,0.15));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+}
+.btn-acero:hover { filter: brightness(1.1); }
+
+.btn-ghost-metal {
+  background: linear-gradient(180deg, rgba(35,47,82,0.4), rgba(20,28,51,0.2));
+  color: var(--marfil-dim);
+  border: 1px solid var(--hairline-soft);
+}
+.btn-ghost-metal:hover { border-color: var(--hairline); color: var(--marfil); }
+
+/* Check metalizado (reemplaza verde sólido) */
+.check-metal {
+  background: linear-gradient(180deg, var(--habitos) 0%, #3c8467 100%);
+  border-color: rgba(91,180,145,0.7) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+/* Solo lectores de pantalla */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute; left: -9999px; top: 0.5rem; z-index: 200;
+  background: var(--laton); color: var(--noche); font-weight: 600;
+  padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none;
+}
+.skip-link:focus { left: 1rem; }

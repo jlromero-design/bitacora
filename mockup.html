@@ -1,0 +1,2171 @@
+<!DOCTYPE html>
+<html lang="es-AR" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bitácora Vale — Maqueta</title>
+
+  <!-- Google Fonts: Cinzel (títulos), EB Garamond (cuerpo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ═══════════════════════════════════════════════════════
+       TOKENS DE DISEÑO — Bitácora Vale
+       ═══════════════════════════════════════════════════════ */
+    :root {
+      /* Paleta principal */
+      --ink:        #1a2744;   /* Azul tinta de medianoche — dominante */
+      --ink-mid:    #253660;   /* Tinta más clara para variantes */
+      --ink-soft:   #3d5282;   /* Tinta suave — bordes, íconos secundarios */
+      --brass:      #b8902a;   /* Latón/dorado cálido — acento */
+      --brass-light:#d4aa4a;   /* Dorado claro — hover */
+      --brass-pale: #f0e0a8;   /* Crema dorada — fondos de acento */
+
+      /* Fondos tipo pergamino */
+      --parchment:  #faf6ee;   /* Fondo principal — marfil cálido */
+      --parchment-2:#f4edd8;   /* Fondo secundario — un tono más oscuro */
+      --parchment-3:#ece4cc;   /* Bordes y separadores */
+
+      /* Texto — contrastes WCAG 2.1 AA */
+      --text-main:  #1a2744;   /* Texto principal sobre pergamino: ~10:1 ✓ */
+      --text-body:  #2d3a5a;   /* Texto de lectura: ~7:1 ✓ */
+      --text-muted: #5a6680;   /* Texto secundario: ~4.8:1 ✓ */
+      --text-on-ink:#faf6ee;   /* Texto sobre fondo oscuro */
+
+      /* Estados de tipo de ítem */
+      --type-tourism:   #2a5c8a; --type-tourism-bg:  #e8f0f8;
+      --type-academic:  #5a3090; --type-academic-bg: #f0eaf8;
+      --type-habit:     #1e6b4a; --type-habit-bg:    #e6f4ee;
+      --type-expense:   #8a2a2a; --type-expense-bg:  #f8eaea;
+      --type-home:      #8a5a1a; --type-home-bg:     #f8f0e0;
+      --type-logistics: #4a6a4a; --type-logistics-bg:#eaf0ea;
+
+      /* Tipografía */
+      --font-title: 'Cinzel', 'Georgia', serif;
+      --font-body:  'EB Garamond', 'Georgia', serif;
+      --font-ui:    system-ui, -apple-system, sans-serif;
+
+      /* Espaciado base 8px */
+      --s1: 0.25rem;   /* 4px  */
+      --s2: 0.5rem;    /* 8px  */
+      --s3: 0.75rem;   /* 12px */
+      --s4: 1rem;      /* 16px */
+      --s5: 1.25rem;   /* 20px */
+      --s6: 1.5rem;    /* 24px */
+      --s8: 2rem;      /* 32px */
+      --s10: 2.5rem;   /* 40px */
+      --s12: 3rem;     /* 48px */
+
+      /* Radio de borde */
+      --r-sm: 4px;
+      --r-md: 8px;
+      --r-lg: 12px;
+
+      /* Sombras */
+      --shadow-sm: 0 1px 3px rgba(26,39,68,0.10);
+      --shadow-md: 0 4px 12px rgba(26,39,68,0.12);
+      --shadow-lg: 0 8px 24px rgba(26,39,68,0.14);
+
+      /* Transición estándar */
+      --ease: 200ms ease;
+    }
+
+    /* ── Reducir movimiento ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+
+    /* ── Reset base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--parchment);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    /* ── Skip link ── */
+    .skip-link {
+      position: absolute; left: -9999px; top: var(--s2);
+      background: var(--ink); color: var(--text-on-ink);
+      padding: var(--s2) var(--s4); border-radius: var(--r-md);
+      font-family: var(--font-ui); font-size: 0.875rem; z-index: 9999;
+      text-decoration: none;
+    }
+    .skip-link:focus { left: var(--s4); }
+
+    /* ══════════════════════════════════
+       HEADER / BARRA DE NAVEGACIÓN
+       ══════════════════════════════════ */
+    .app-header {
+      background: var(--ink);
+      color: var(--text-on-ink);
+      border-bottom: 3px solid var(--brass);
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: var(--shadow-md);
+    }
+    .header-inner {
+      max-width: 1280px; margin: 0 auto;
+      padding: var(--s3) var(--s6);
+      display: flex; align-items: center; gap: var(--s4);
+    }
+    .app-emblem {
+      width: 40px; height: 40px; flex-shrink: 0;
+      color: var(--brass);
+    }
+    .app-title-group { flex: 1; min-width: 0; }
+    .app-title {
+      font-family: var(--font-title);
+      font-size: 1.25rem; font-weight: 700;
+      letter-spacing: 0.08em; color: var(--text-on-ink);
+      line-height: 1.2;
+    }
+    .app-subtitle {
+      font-size: 0.8rem; color: rgba(250,246,238,0.7);
+      font-style: italic; font-family: var(--font-body);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* Nav principal */
+    .main-nav { display: flex; gap: var(--s1); }
+    .nav-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      padding: var(--s2) var(--s3);
+      border: none; background: transparent;
+      color: rgba(250,246,238,0.75);
+      font-family: var(--font-ui); font-size: 0.7rem;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      cursor: pointer; border-radius: var(--r-md);
+      min-width: 52px; min-height: 52px;
+      transition: background var(--ease), color var(--ease);
+    }
+    .nav-btn svg { width: 20px; height: 20px; }
+    .nav-btn:hover, .nav-btn[aria-current="page"] {
+      background: rgba(184,144,42,0.25);
+      color: var(--brass-light);
+    }
+    .nav-btn:focus-visible {
+      outline: 2px solid var(--brass-light); outline-offset: 2px;
+    }
+
+    /* ══════════════════════════════════
+       LAYOUT PRINCIPAL
+       ══════════════════════════════════ */
+    .app-layout {
+      max-width: 1280px; margin: 0 auto;
+      padding: var(--s6) var(--s6) var(--s12);
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: var(--s6);
+    }
+    @media (max-width: 900px) {
+      .app-layout { grid-template-columns: 1fr; padding: var(--s4); }
+      .sidebar { display: none; }
+    }
+
+    /* ══════════════════════════════════
+       SIDEBAR
+       ══════════════════════════════════ */
+    .sidebar { display: flex; flex-direction: column; gap: var(--s4); }
+
+    .card {
+      background: white;
+      border: 1px solid var(--parchment-3);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .card-header {
+      background: var(--ink);
+      color: var(--text-on-ink);
+      padding: var(--s3) var(--s4);
+      display: flex; align-items: center; gap: var(--s2);
+    }
+    .card-header svg { width: 16px; height: 16px; color: var(--brass); flex-shrink: 0; }
+    .card-title {
+      font-family: var(--font-title);
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .card-body { padding: var(--s4); }
+
+    /* Mini calendario del sidebar */
+    .mini-calendar { font-family: var(--font-ui); }
+    .cal-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: var(--s3);
+    }
+    .cal-month {
+      font-family: var(--font-title);
+      font-size: 0.875rem; font-weight: 600;
+      color: var(--ink);
+    }
+    .cal-nav-btn {
+      border: none; background: none; cursor: pointer;
+      color: var(--brass); padding: var(--s1);
+      border-radius: var(--r-sm); min-width: 28px; min-height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background var(--ease);
+    }
+    .cal-nav-btn:hover { background: var(--brass-pale); }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+    .cal-day-label {
+      text-align: center; font-size: 0.65rem; font-weight: 600;
+      color: var(--text-muted); text-transform: uppercase;
+      padding: var(--s1) 0;
+    }
+    .cal-day {
+      aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; border-radius: 50%; cursor: pointer;
+      transition: background var(--ease), color var(--ease);
+      border: none; background: none; color: var(--text-body);
+    }
+    .cal-day:hover { background: var(--parchment-2); }
+    .cal-day.today {
+      background: var(--brass); color: white; font-weight: 700;
+    }
+    .cal-day.trip {
+      background: var(--parchment-2);
+      color: var(--ink-soft);
+    }
+    .cal-day.other-month { color: var(--parchment-3); }
+
+    /* Itinerario rápido */
+    .itinerary-list { list-style: none; }
+    .itinerary-item {
+      display: grid; grid-template-columns: auto 1fr auto;
+      gap: var(--s2); align-items: start;
+      padding: var(--s2) 0;
+      border-bottom: 1px solid var(--parchment-3);
+      font-size: 0.85rem;
+    }
+    .itinerary-item:last-child { border-bottom: none; }
+    .itinerary-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--brass); margin-top: 4px; flex-shrink: 0;
+    }
+    .itinerary-place { font-weight: 600; color: var(--ink); font-family: var(--font-body); }
+    .itinerary-dates { font-size: 0.75rem; color: var(--text-muted); }
+    .currency-chip {
+      font-size: 0.65rem; background: var(--brass-pale);
+      color: var(--brass); border-radius: 99px;
+      padding: 1px var(--s2); font-weight: 700; white-space: nowrap;
+    }
+
+    /* Contador de días */
+    .days-counter {
+      text-align: center; padding: var(--s4);
+      border-top: 1px solid var(--parchment-3);
+    }
+    .days-num {
+      font-family: var(--font-title);
+      font-size: 2.5rem; font-weight: 700; color: var(--ink);
+      line-height: 1;
+    }
+    .days-label { font-size: 0.8rem; color: var(--text-muted); }
+    .progress-bar-wrap {
+      margin-top: var(--s3);
+      background: var(--parchment-2);
+      border-radius: 99px; height: 8px; overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%; background: linear-gradient(90deg, var(--ink) 0%, var(--brass) 100%);
+      border-radius: 99px; transition: width var(--ease);
+    }
+
+    /* ══════════════════════════════════
+       ÁREA PRINCIPAL — TABS
+       ══════════════════════════════════ */
+    .main-area { min-width: 0; }
+
+    .tabs-container { }
+    .tablist {
+      display: flex; gap: var(--s1);
+      border-bottom: 2px solid var(--parchment-3);
+      margin-bottom: var(--s6); overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tablist::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      display: flex; align-items: center; gap: var(--s2);
+      padding: var(--s3) var(--s4);
+      border: none; background: none; cursor: pointer;
+      font-family: var(--font-title); font-size: 0.8rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent; margin-bottom: -2px;
+      white-space: nowrap; min-height: 44px;
+      transition: color var(--ease), border-color var(--ease);
+    }
+    .tab-btn svg { width: 15px; height: 15px; }
+    .tab-btn[aria-selected="true"] {
+      color: var(--ink); border-bottom-color: var(--brass);
+    }
+    .tab-btn:hover:not([aria-selected="true"]) { color: var(--ink-soft); }
+    .tab-btn:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; border-radius: var(--r-sm); }
+
+    .tabpanel { }
+    .tabpanel[hidden] { display: none; }
+
+    /* ══════════════════════════════════
+       MÓDULO: AGENDA
+       ══════════════════════════════════ */
+    .agenda-daybar {
+      display: flex; align-items: center; gap: var(--s3);
+      background: var(--ink); color: var(--text-on-ink);
+      border-radius: var(--r-lg); padding: var(--s4) var(--s5);
+      margin-bottom: var(--s5); box-shadow: var(--shadow-md);
+    }
+    .daybar-nav-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1px solid rgba(184,144,42,0.4);
+      background: rgba(184,144,42,0.1);
+      color: var(--brass-light); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background var(--ease);
+    }
+    .daybar-nav-btn:hover { background: rgba(184,144,42,0.25); }
+    .daybar-nav-btn:focus-visible { outline: 2px solid var(--brass-light); outline-offset: 2px; }
+    .daybar-info { flex: 1; min-width: 0; }
+    .daybar-date {
+      font-family: var(--font-title);
+      font-size: 1.2rem; font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .daybar-meta {
+      display: flex; align-items: center; gap: var(--s3);
+      font-size: 0.8rem; color: rgba(250,246,238,0.75);
+      margin-top: 2px; flex-wrap: wrap;
+    }
+    .daybar-meta .location-chip {
+      display: flex; align-items: center; gap: 4px;
+      background: rgba(184,144,42,0.2); border-radius: 99px;
+      padding: 2px var(--s3); color: var(--brass-light);
+      font-weight: 600;
+    }
+    .daybar-day-num {
+      font-family: var(--font-title);
+      font-size: 2rem; font-weight: 700;
+      color: var(--brass); text-align: center; min-width: 56px;
+    }
+
+    /* Separador ornamental */
+    .ornament {
+      text-align: center; color: var(--brass);
+      font-size: 0.75rem; letter-spacing: 0.3em;
+      margin: var(--s4) 0;
+      user-select: none;
+    }
+    .rule {
+      border: none; border-top: 1px solid var(--parchment-3);
+      margin: var(--s4) 0;
+    }
+    .rule-ornament {
+      display: flex; align-items: center; gap: var(--s3);
+      margin: var(--s5) 0;
+      color: var(--text-muted);
+    }
+    .rule-ornament::before, .rule-ornament::after {
+      content: ''; flex: 1; border-top: 1px solid var(--parchment-3);
+    }
+    .rule-ornament-text {
+      font-size: 0.7rem; letter-spacing: 0.2em;
+      text-transform: uppercase; font-family: var(--font-ui);
+      color: var(--brass); white-space: nowrap;
+    }
+
+    /* Lista de ítems del día */
+    .agenda-items { display: flex; flex-direction: column; gap: var(--s3); }
+    .agenda-item {
+      display: grid; grid-template-columns: 64px 1fr auto;
+      gap: var(--s3); align-items: start;
+      background: white; border: 1px solid var(--parchment-3);
+      border-radius: var(--r-md); padding: var(--s4);
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow var(--ease);
+    }
+    .agenda-item:hover { box-shadow: var(--shadow-md); }
+    .item-time {
+      font-family: var(--font-ui); font-size: 0.8rem;
+      font-weight: 700; color: var(--text-muted);
+      text-align: center; padding-top: 2px;
+    }
+    .item-content { min-width: 0; }
+    .item-title {
+      font-family: var(--font-body);
+      font-size: 1rem; font-weight: 600;
+      color: var(--text-main); margin-bottom: 2px;
+    }
+    .item-desc {
+      font-size: 0.875rem; color: var(--text-body);
+      line-height: 1.5;
+    }
+    .item-tags { display: flex; gap: var(--s2); flex-wrap: wrap; margin-top: var(--s2); }
+    .type-badge {
+      font-size: 0.65rem; font-weight: 700;
+      padding: 2px var(--s2); border-radius: 99px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      font-family: var(--font-ui);
+    }
+    .type-turismo   { background: var(--type-tourism-bg);   color: var(--type-tourism); }
+    .type-academico { background: var(--type-academic-bg);  color: var(--type-academic); }
+    .type-habito    { background: var(--type-habit-bg);     color: var(--type-habit); }
+    .type-gasto     { background: var(--type-expense-bg);   color: var(--type-expense); }
+    .type-casa      { background: var(--type-home-bg);      color: var(--type-home); }
+    .type-logistica { background: var(--type-logistics-bg); color: var(--type-logistics); }
+
+    .item-amount {
+      font-family: var(--font-ui); font-size: 0.85rem;
+      font-weight: 700; color: var(--type-expense);
+      text-align: right; white-space: nowrap;
+      padding-top: 2px;
+    }
+    .item-amount .amount-ars {
+      font-size: 0.7rem; color: var(--text-muted);
+      font-weight: 400; display: block;
+    }
+
+    /* Botón de acción */
+    .btn {
+      display: inline-flex; align-items: center; gap: var(--s2);
+      padding: var(--s3) var(--s4);
+      border-radius: var(--r-md); border: none; cursor: pointer;
+      font-family: var(--font-body); font-size: 0.9rem; font-weight: 600;
+      min-height: 44px;
+      transition: background var(--ease), transform var(--ease);
+    }
+    .btn:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--ink); color: var(--text-on-ink);
+    }
+    .btn-primary:hover { background: var(--ink-mid); }
+    .btn-gold {
+      background: var(--brass); color: white;
+    }
+    .btn-gold:hover { background: var(--brass-light); }
+    .btn-ghost {
+      background: transparent; color: var(--ink);
+      border: 1px solid var(--parchment-3);
+    }
+    .btn-ghost:hover { background: var(--parchment-2); }
+    .btn svg { width: 16px; height: 16px; }
+
+    /* Nota libre del día */
+    .day-note {
+      background: var(--brass-pale);
+      border: 1px solid rgba(184,144,42,0.3);
+      border-radius: var(--r-md);
+      padding: var(--s4); margin-top: var(--s5);
+    }
+    .day-note-label {
+      font-family: var(--font-title); font-size: 0.7rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--brass); margin-bottom: var(--s2);
+      display: flex; align-items: center; gap: var(--s2);
+    }
+    .day-note textarea {
+      width: 100%; resize: vertical; min-height: 80px;
+      background: transparent; border: none;
+      font-family: var(--font-body); font-size: 0.95rem;
+      color: var(--text-body); line-height: 1.6;
+      outline: none;
+    }
+    .day-note textarea::placeholder { color: var(--text-muted); font-style: italic; }
+
+    .agenda-actions {
+      display: flex; gap: var(--s3); margin-top: var(--s5);
+      flex-wrap: wrap;
+    }
+
+    /* ══════════════════════════════════
+       MÓDULO: DINERO
+       ══════════════════════════════════ */
+    .money-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--s5);
+    }
+
+    /* Conversor */
+    .converter-card {
+      background: white;
+      border: 1px solid var(--parchment-3);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .converter-header {
+      background: linear-gradient(135deg, var(--ink) 0%, var(--ink-mid) 100%);
+      padding: var(--s4) var(--s5);
+      display: flex; align-items: center; gap: var(--s3);
+    }
+    .converter-header svg { width: 20px; height: 20px; color: var(--brass); }
+    .converter-title {
+      font-family: var(--font-title); font-size: 0.85rem;
+      font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-on-ink);
+    }
+    .converter-body { padding: var(--s5); }
+
+    .currency-input-group { margin-bottom: var(--s4); }
+    .currency-input-group label {
+      display: flex; align-items: center; gap: var(--s2);
+      font-family: var(--font-title); font-size: 0.7rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: var(--s2);
+    }
+    .currency-flag { font-size: 1rem; }
+    .currency-input-wrap {
+      display: flex; align-items: stretch;
+      border: 2px solid var(--parchment-3);
+      border-radius: var(--r-md); overflow: hidden;
+      transition: border-color var(--ease);
+    }
+    .currency-input-wrap:focus-within { border-color: var(--brass); }
+    .currency-symbol {
+      background: var(--parchment-2);
+      padding: var(--s3) var(--s3);
+      font-family: var(--font-ui); font-size: 0.85rem;
+      font-weight: 700; color: var(--text-muted);
+      display: flex; align-items: center; border-right: 1px solid var(--parchment-3);
+    }
+    .currency-input-wrap input {
+      flex: 1; border: none; padding: var(--s3) var(--s3);
+      font-family: var(--font-ui); font-size: 1.1rem; font-weight: 600;
+      color: var(--text-main); background: transparent; outline: none;
+      min-width: 0;
+    }
+
+    .converter-results {
+      background: var(--parchment);
+      border: 1px solid var(--parchment-3);
+      border-radius: var(--r-md); padding: var(--s4);
+      margin-top: var(--s4);
+    }
+    .result-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: var(--s2) 0; border-bottom: 1px solid var(--parchment-3);
+    }
+    .result-row:last-child { border-bottom: none; }
+    .result-currency {
+      display: flex; align-items: center; gap: var(--s2);
+      font-family: var(--font-ui); font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .result-amount {
+      font-family: var(--font-ui); font-size: 1rem;
+      font-weight: 700; color: var(--ink);
+    }
+    .result-amount.primary { font-size: 1.2rem; color: var(--brass); }
+
+    .rate-info {
+      font-size: 0.75rem; color: var(--text-muted);
+      margin-top: var(--s3); display: flex; align-items: center; gap: var(--s2);
+      flex-wrap: wrap;
+    }
+    .rate-info svg { width: 12px; height: 12px; flex-shrink: 0; }
+    .rate-badge {
+      font-size: 0.65rem; background: var(--type-habit-bg);
+      color: var(--type-habit); border-radius: 99px;
+      padding: 1px var(--s2); font-weight: 700;
+    }
+
+    /* Estimador de costo real en ARS */
+    .estimator-section { margin-top: var(--s4); }
+    .estimator-label {
+      font-family: var(--font-title); font-size: 0.7rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: var(--s3);
+      display: flex; align-items: center; gap: var(--s2);
+    }
+    .estimator-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.85rem; padding: var(--s1) 0;
+      color: var(--text-body);
+    }
+    .estimator-row.total {
+      font-weight: 700; color: var(--ink);
+      border-top: 1px solid var(--parchment-3);
+      padding-top: var(--s3); margin-top: var(--s2);
+      font-size: 1rem;
+    }
+    .estimator-row .muted { color: var(--text-muted); font-size: 0.8rem; }
+
+    .disclaimer {
+      background: var(--brass-pale);
+      border-left: 3px solid var(--brass);
+      border-radius: 0 var(--r-sm) var(--r-sm) 0;
+      padding: var(--s3) var(--s4); margin-top: var(--s4);
+      font-size: 0.8rem; color: var(--text-body); font-style: italic;
+    }
+
+    /* Presupuesto por categoría */
+    .budget-card {
+      background: white;
+      border: 1px solid var(--parchment-3);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      grid-column: 1 / -1;
+    }
+    .budget-header {
+      background: linear-gradient(135deg, var(--ink) 0%, var(--ink-mid) 100%);
+      padding: var(--s4) var(--s5);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .budget-header-left { display: flex; align-items: center; gap: var(--s3); }
+    .budget-header svg { width: 20px; height: 20px; color: var(--brass); }
+    .budget-title {
+      font-family: var(--font-title); font-size: 0.85rem;
+      font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-on-ink);
+    }
+    .budget-body { padding: var(--s5); }
+    .budget-categories { display: flex; flex-direction: column; gap: var(--s4); }
+    .budget-cat { }
+    .budget-cat-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: var(--s2);
+    }
+    .budget-cat-name {
+      font-family: var(--font-body); font-size: 0.9rem; font-weight: 600;
+      color: var(--text-main); display: flex; align-items: center; gap: var(--s2);
+    }
+    .budget-cat-amounts {
+      font-family: var(--font-ui); font-size: 0.8rem; color: var(--text-muted);
+    }
+    .budget-cat-amounts strong { color: var(--text-main); }
+    .budget-bar-bg {
+      background: var(--parchment-2); border-radius: 99px; height: 10px;
+      overflow: hidden;
+    }
+    .budget-bar-fill {
+      height: 100%; border-radius: 99px;
+      background: linear-gradient(90deg, var(--ink) 0%, var(--brass) 100%);
+      transition: width 0.6s ease;
+    }
+    .budget-bar-fill.over { background: linear-gradient(90deg, #8a2a2a, #c04040); }
+
+    /* Selector de tramo */
+    .segment-tabs {
+      display: flex; gap: var(--s2); margin-bottom: var(--s5); flex-wrap: wrap;
+    }
+    .segment-btn {
+      padding: var(--s2) var(--s4); border-radius: 99px;
+      border: 1px solid var(--parchment-3);
+      background: transparent; cursor: pointer;
+      font-family: var(--font-body); font-size: 0.85rem;
+      color: var(--text-muted); min-height: 36px;
+      transition: background var(--ease), color var(--ease), border-color var(--ease);
+    }
+    .segment-btn.active {
+      background: var(--ink); color: var(--text-on-ink);
+      border-color: var(--ink);
+    }
+    .segment-btn:hover:not(.active) { border-color: var(--brass); color: var(--ink); }
+
+    /* ══════════════════════════════════
+       DESIGN TOKENS SHOWCASE
+       ══════════════════════════════════ */
+    .design-showcase { padding: var(--s6); }
+    .showcase-section { margin-bottom: var(--s10); }
+    .showcase-title {
+      font-family: var(--font-title);
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: var(--s4);
+      display: flex; align-items: center; gap: var(--s3);
+    }
+    .showcase-title::after { content: ''; flex: 1; border-top: 1px solid var(--parchment-3); }
+
+    .color-swatches { display: flex; gap: var(--s3); flex-wrap: wrap; }
+    .swatch {
+      width: 80px; text-align: center;
+    }
+    .swatch-color {
+      height: 60px; border-radius: var(--r-md);
+      border: 1px solid rgba(0,0,0,0.08);
+      margin-bottom: var(--s2);
+    }
+    .swatch-name { font-size: 0.65rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+    .swatch-value { font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-ui); }
+
+    .type-badges-demo { display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .type-badge-demo {
+      padding: var(--s2) var(--s4); border-radius: var(--r-md);
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .type-badge-demo .tb-name { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+    .type-badge-demo .tb-example { font-size: 0.8rem; }
+
+    /* ══════════════════════════════════
+       RECORDATORIOS
+       ══════════════════════════════════ */
+    .reminders-list { display: flex; flex-direction: column; gap: var(--s3); }
+    .reminder-item {
+      display: flex; align-items: start; gap: var(--s3);
+      background: white; border: 1px solid var(--parchment-3);
+      border-radius: var(--r-md); padding: var(--s3) var(--s4);
+      box-shadow: var(--shadow-sm);
+    }
+    .reminder-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--brass-pale); display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0;
+      font-size: 0.9rem;
+    }
+    .reminder-text { flex: 1; }
+    .reminder-title { font-weight: 600; font-size: 0.9rem; color: var(--text-main); }
+    .reminder-when { font-size: 0.75rem; color: var(--text-muted); }
+    .reminder-urgency {
+      font-size: 0.65rem; font-weight: 700; padding: 2px var(--s2);
+      border-radius: 99px; white-space: nowrap;
+    }
+    .urgency-alta { background: var(--type-expense-bg); color: var(--type-expense); }
+    .urgency-media { background: var(--type-home-bg); color: var(--type-home); }
+    .urgency-baja { background: var(--type-habit-bg); color: var(--type-habit); }
+
+    /* ══════════════════════════════════
+       HÁBITOS
+       ══════════════════════════════════ */
+    .habit-item {
+      background: white; border: 1px solid var(--parchment-3);
+      border-radius: var(--r-md); padding: var(--s4);
+      box-shadow: var(--shadow-sm); margin-bottom: var(--s3);
+    }
+    .habit-header { display: flex; justify-content: space-between; margin-bottom: var(--s3); align-items: center; }
+    .habit-name { font-weight: 600; font-size: 0.95rem; color: var(--text-main); }
+    .streak-chip {
+      display: flex; align-items: center; gap: 4px;
+      background: var(--type-home-bg); color: var(--type-home);
+      font-size: 0.7rem; font-weight: 700; padding: 2px var(--s2);
+      border-radius: 99px;
+    }
+    .habit-dots { display: flex; gap: var(--s2); }
+    .habit-dot {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 2px solid var(--parchment-3); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 700; color: var(--text-muted);
+      transition: background var(--ease), border-color var(--ease);
+      font-family: var(--font-ui);
+    }
+    .habit-dot.done { background: var(--type-habit); border-color: var(--type-habit); color: white; }
+    .habit-dot.today { border-color: var(--brass); color: var(--brass); }
+
+    /* ══════════════════════════════════
+       FOOTER ORNAMENTAL
+       ══════════════════════════════════ */
+    .app-footer {
+      text-align: center; padding: var(--s8) var(--s4);
+      color: var(--text-muted); font-size: 0.8rem; font-style: italic;
+    }
+    .footer-emblem { color: var(--brass); font-size: 1rem; }
+
+    /* ══════════════════════════════════
+       LIVE REGION para anuncios ARIA
+       ══════════════════════════════════ */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* ══════════════════════════════════
+       TEMA GRIMORIO ELEGANTE
+       ══════════════════════════════════ */
+    :root[data-theme="dark"] {
+      --ink:        #0c1426;
+      --ink-mid:    #14213d;
+      --ink-soft:   #8fa6d6;
+      --brass:      #d8ad5f;
+      --brass-light:#f1d99d;
+      --brass-pale: rgba(241,217,157,0.12);
+      --parchment:  #0b1220;
+      --parchment-2:#111d35;
+      --parchment-3:rgba(241,217,157,0.16);
+      --text-main:  #f3eddb;
+      --text-body:  #c9d1e6;
+      --text-muted: #8d9ab8;
+      --text-on-ink:#f8f1df;
+      --type-tourism-bg:rgba(74,122,184,0.14);
+      --type-academic-bg:rgba(126,94,174,0.16);
+      --type-habit-bg:rgba(75,173,132,0.14);
+      --type-expense-bg:rgba(213,114,93,0.14);
+      --type-home-bg:rgba(216,173,95,0.15);
+      --type-logistics-bg:rgba(126,160,139,0.13);
+      --moon:#f7e7b5;
+      --wine:#6d3044;
+      --sage:#7ea08b;
+      --glass:rgba(17,29,53,0.78);
+      --shadow-sm:0 1px 2px rgba(0,0,0,0.42);
+      --shadow-md:0 12px 36px rgba(0,0,0,0.28);
+      --shadow-lg:0 24px 70px rgba(0,0,0,0.34);
+    }
+
+    body {
+      position: relative;
+      overflow-x: hidden;
+    }
+    :root[data-theme="dark"] body {
+      background:
+        radial-gradient(70% 44% at 48% -12%, rgba(247,231,181,0.10), transparent 66%),
+        linear-gradient(116deg, transparent 0 22%, rgba(126,160,139,0.055) 36%, transparent 52% 100%),
+        linear-gradient(245deg, transparent 0 24%, rgba(109,48,68,0.075) 43%, transparent 60% 100%),
+        linear-gradient(180deg, #0d1628 0%, #080d18 100%);
+      color: var(--text-main);
+    }
+    :root[data-theme="dark"] body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(1.2px 1.2px at 8% 22%, rgba(247,231,181,0.78), transparent),
+        radial-gradient(1.3px 1.3px at 22% 68%, rgba(255,255,255,0.50), transparent),
+        radial-gradient(1.4px 1.4px at 40% 14%, rgba(247,231,181,0.70), transparent),
+        radial-gradient(1.1px 1.1px at 64% 42%, rgba(255,255,255,0.46), transparent),
+        radial-gradient(1.5px 1.5px at 78% 27%, rgba(247,231,181,0.76), transparent),
+        radial-gradient(1.1px 1.1px at 88% 78%, rgba(255,255,255,0.40), transparent),
+        linear-gradient(18deg, transparent 9%, rgba(247,231,181,0.11) 9.4% 9.7%, transparent 10.2%),
+        linear-gradient(161deg, transparent 27%, rgba(143,166,214,0.10) 27.4% 27.8%, transparent 28.2%);
+      opacity: 0.58;
+      animation: nightTwinkle 7s ease-in-out infinite;
+    }
+    @keyframes nightTwinkle { 0%,100% { opacity: 0.42; } 50% { opacity: 0.72; } }
+
+    .skip-link,
+    .app-header,
+    .app-layout,
+    .app-footer {
+      position: relative;
+      z-index: 1;
+    }
+    :root[data-theme="dark"] .app-header {
+      background: linear-gradient(180deg, rgba(14,24,43,0.94), rgba(9,15,28,0.88));
+      border-bottom: 1px solid rgba(241,217,157,0.28);
+      box-shadow: 0 10px 36px rgba(0,0,0,0.36), 0 1px 0 rgba(247,231,181,0.10) inset;
+      backdrop-filter: blur(12px);
+    }
+    :root[data-theme="dark"] .app-emblem {
+      filter: drop-shadow(0 0 8px rgba(241,217,157,0.36));
+      animation: sealGlow 4.8s ease-in-out infinite;
+    }
+    @keyframes sealGlow {
+      0%,100% { filter: drop-shadow(0 0 6px rgba(241,217,157,0.26)); }
+      50% { filter: drop-shadow(0 0 14px rgba(241,217,157,0.56)); }
+    }
+    :root[data-theme="dark"] .app-title {
+      color: var(--brass-light);
+      text-shadow: 0 0 18px rgba(241,217,157,0.24);
+    }
+    :root[data-theme="dark"] .app-subtitle {
+      color: rgba(248,241,223,0.64);
+    }
+
+    .card,
+    .nav-btn,
+    .cal-nav-btn,
+    .daybar-nav-btn,
+    .tab-btn,
+    .btn,
+    .segment-btn,
+    .habit-dot {
+      transition: transform var(--ease), border-color var(--ease), background var(--ease), box-shadow var(--ease), color var(--ease), opacity var(--ease);
+    }
+    :root[data-theme="dark"] .card,
+    :root[data-theme="dark"] .daybar,
+    :root[data-theme="dark"] .dashboard-card,
+    :root[data-theme="dark"] .activity-card,
+    :root[data-theme="dark"] .money-panel,
+    :root[data-theme="dark"] .habit-item,
+    :root[data-theme="dark"] .design-token-card {
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.045), transparent 42%),
+        var(--glass);
+      border-color: rgba(241,217,157,0.17);
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(8px);
+    }
+    :root[data-theme="dark"] .card::before,
+    :root[data-theme="dark"] .daybar::before,
+    :root[data-theme="dark"] .dashboard-card::before,
+    :root[data-theme="dark"] .activity-card::before,
+    :root[data-theme="dark"] .money-panel::before,
+    :root[data-theme="dark"] .habit-item::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(247,231,181,0.16), transparent 32%, transparent 72%, rgba(143,166,214,0.10));
+      opacity: 0.44;
+      -webkit-mask: linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
+      mask-composite: exclude;
+    }
+    :root[data-theme="dark"] .card:hover,
+    :root[data-theme="dark"] .dashboard-card:hover,
+    :root[data-theme="dark"] .activity-card:hover,
+    :root[data-theme="dark"] .money-panel:hover,
+    :root[data-theme="dark"] .habit-item:hover {
+      transform: translateY(-1px);
+      border-color: rgba(241,217,157,0.34);
+      box-shadow: var(--shadow-lg), 0 0 28px rgba(241,217,157,0.06);
+    }
+    :root[data-theme="dark"] .card-header {
+      background: linear-gradient(135deg, rgba(216,173,95,0.12), rgba(20,33,61,0.88));
+      border-bottom: 1px solid rgba(241,217,157,0.14);
+    }
+    :root[data-theme="dark"] .nav-btn:hover,
+    :root[data-theme="dark"] .nav-btn[aria-current="page"],
+    :root[data-theme="dark"] .tab-btn:hover,
+    :root[data-theme="dark"] .tab-btn[aria-selected="true"],
+    :root[data-theme="dark"] .segment-btn.active {
+      background: rgba(241,217,157,0.12);
+      color: var(--brass-light);
+      box-shadow: 0 0 0 1px rgba(241,217,157,0.12), 0 0 18px rgba(241,217,157,0.10);
+    }
+    :root[data-theme="dark"] .nav-btn[aria-current="page"],
+    :root[data-theme="dark"] .tab-btn[aria-selected="true"] {
+      position: relative;
+    }
+    :root[data-theme="dark"] .nav-btn[aria-current="page"]::after,
+    :root[data-theme="dark"] .tab-btn[aria-selected="true"]::after {
+      content: "";
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      bottom: 5px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--brass-light), transparent);
+      box-shadow: 0 0 12px rgba(241,217,157,0.56);
+    }
+    :root[data-theme="dark"] .daybar-nav-btn,
+    :root[data-theme="dark"] .cal-nav-btn,
+    :root[data-theme="dark"] .btn {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0)), rgba(20,33,61,0.78);
+      color: var(--brass-light);
+    }
+    :root[data-theme="dark"] .daybar-nav-btn:hover,
+    :root[data-theme="dark"] .cal-nav-btn:hover,
+    :root[data-theme="dark"] .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 1px rgba(241,217,157,0.16), 0 0 20px rgba(241,217,157,0.12);
+    }
+    :root[data-theme="dark"] input,
+    :root[data-theme="dark"] select,
+    :root[data-theme="dark"] textarea {
+      background: rgba(8,13,24,0.42);
+      color: var(--text-main);
+      border-color: rgba(241,217,157,0.18);
+    }
+    :root[data-theme="dark"] input::placeholder,
+    :root[data-theme="dark"] textarea::placeholder {
+      color: rgba(201,209,230,0.52);
+    }
+    :root[data-theme="dark"] .currency-chip,
+    :root[data-theme="dark"] .streak-chip,
+    :root[data-theme="dark"] .reminder-urgency {
+      border: 1px solid rgba(241,217,157,0.14);
+    }
+    :root[data-theme="dark"] .agenda-item,
+    :root[data-theme="dark"] .converter-card,
+    :root[data-theme="dark"] .budget-card,
+    :root[data-theme="dark"] .reminder-item,
+    :root[data-theme="dark"] .day-note,
+    :root[data-theme="dark"] .converter-results,
+    :root[data-theme="dark"] .currency-input-wrap {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.035), transparent 44%),
+        rgba(17,29,53,0.72);
+      border-color: rgba(241,217,157,0.17);
+      box-shadow: var(--shadow-sm);
+    }
+    :root[data-theme="dark"] .agenda-item:hover,
+    :root[data-theme="dark"] .converter-card:hover,
+    :root[data-theme="dark"] .budget-card:hover,
+    :root[data-theme="dark"] .reminder-item:hover {
+      border-color: rgba(241,217,157,0.32);
+      box-shadow: var(--shadow-md), 0 0 22px rgba(241,217,157,0.055);
+    }
+    :root[data-theme="dark"] .item-title,
+    :root[data-theme="dark"] .habit-name,
+    :root[data-theme="dark"] .reminder-title,
+    :root[data-theme="dark"] .itinerary-place,
+    :root[data-theme="dark"] .cal-month {
+      color: var(--text-main);
+    }
+    :root[data-theme="dark"] .item-desc,
+    :root[data-theme="dark"] .reminder-when,
+    :root[data-theme="dark"] .itinerary-dates {
+      color: var(--text-body);
+    }
+    :root[data-theme="dark"] .item-time,
+    :root[data-theme="dark"] .amount-ars,
+    :root[data-theme="dark"] .result-currency,
+    :root[data-theme="dark"] .rate-info,
+    :root[data-theme="dark"] .currency-input-group label {
+      color: var(--text-muted);
+    }
+    :root[data-theme="dark"] .item-amount,
+    :root[data-theme="dark"] .result-amount,
+    :root[data-theme="dark"] .result-amount.primary {
+      color: var(--brass-light);
+    }
+    :root[data-theme="dark"] .currency-symbol {
+      background: rgba(8,13,24,0.48);
+      color: var(--brass-light);
+      border-right-color: rgba(241,217,157,0.15);
+    }
+    :root[data-theme="dark"] .converter-header {
+      background: linear-gradient(135deg, rgba(216,173,95,0.14), rgba(12,20,38,0.92));
+      border-bottom: 1px solid rgba(241,217,157,0.16);
+    }
+    :root[data-theme="dark"] .type-badge {
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    :root[data-theme="dark"] .type-turismo { color: #9fc6f0; }
+    :root[data-theme="dark"] .type-academico { color: #ceb5f2; }
+    :root[data-theme="dark"] .type-habito { color: #8bd8b5; }
+    :root[data-theme="dark"] .type-gasto { color: #f0a08f; }
+    :root[data-theme="dark"] .type-casa { color: #f1d99d; }
+    :root[data-theme="dark"] .type-logistica { color: #b7cfba; }
+
+    :root[data-theme="dark"] .spark-field {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .spark {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--moon);
+      box-shadow: 0 0 12px rgba(247,231,181,0.86), 0 0 24px rgba(143,166,214,0.32);
+      opacity: 0;
+      animation: sparkDrift 2.8s ease-out forwards;
+    }
+    .spark::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 13px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(247,231,181,0.90), transparent);
+      transform: translate(-50%,-50%) rotate(42deg);
+    }
+    @keyframes sparkDrift {
+      0% { opacity: 0; transform: translate3d(0,8px,0) scale(0.55); }
+      18% { opacity: 0.86; }
+      100% { opacity: 0; transform: translate3d(var(--dx),-42px,0) scale(1); }
+    }
+    @media (max-width: 900px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+        padding: var(--s4);
+        max-width: 100%;
+      }
+      .sidebar {
+        display: none;
+      }
+      html,
+      body {
+        overflow-x: hidden;
+      }
+      .main-area,
+      .tabpanel,
+      .agenda-items,
+      .agenda-item {
+        width: 100%;
+        max-width: calc(100vw - 32px);
+        min-width: 0;
+      }
+      .daybar,
+      .day-note {
+        width: 100%;
+        max-width: calc(100vw - 32px);
+      }
+      .header-inner {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        padding: var(--s3) var(--s4);
+      }
+      .app-emblem {
+        width: 36px;
+        height: 36px;
+      }
+      .app-title-group {
+        flex: 1 1 calc(100% - 52px);
+      }
+      .app-title {
+        font-size: 1rem;
+        letter-spacing: 0.06em;
+      }
+      .app-subtitle {
+        display: none;
+      }
+      .main-nav {
+        flex: 1 0 100%;
+        justify-content: flex-start;
+        margin-top: var(--s2);
+        padding-bottom: 2px;
+      }
+      .main-nav {
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .main-nav::-webkit-scrollbar { display: none; }
+      .nav-btn { min-width: 58px; }
+      .tabs-list {
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .tabs-list::-webkit-scrollbar { display: none; }
+      .daybar {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: var(--s3);
+      }
+      .daybar-info {
+        min-width: 0;
+      }
+      .agenda-item {
+        grid-template-columns: 1fr;
+        gap: var(--s3);
+      }
+      .item-time {
+        text-align: left;
+        padding-top: 0;
+      }
+      .item-content,
+      .item-title,
+      .item-desc {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        overflow-wrap: anywhere;
+        white-space: normal;
+      }
+      .item-title { max-width: 27ch; }
+      .item-desc { max-width: 34ch; }
+      .item-amount {
+        grid-column: auto;
+        text-align: left;
+        white-space: normal;
+      }
+      :root[data-theme="dark"] body::before { opacity: 0.40; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      :root[data-theme="dark"] body::before,
+      :root[data-theme="dark"] .app-emblem,
+      .spark {
+        animation: none !important;
+      }
+      .spark-field { display: none; }
+      :root[data-theme="dark"] .card:hover,
+      :root[data-theme="dark"] .dashboard-card:hover,
+      :root[data-theme="dark"] .activity-card:hover,
+      :root[data-theme="dark"] .money-panel:hover,
+      :root[data-theme="dark"] .habit-item:hover,
+      :root[data-theme="dark"] .btn:hover,
+      :root[data-theme="dark"] .daybar-nav-btn:hover,
+      :root[data-theme="dark"] .cal-nav-btn:hover {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Skip nav -->
+<a href="#main-content" class="skip-link">Ir al contenido principal</a>
+
+<!-- Anuncio para lectores de pantalla -->
+<div aria-live="polite" aria-atomic="true" class="sr-only" id="live-region"></div>
+
+<!-- ═══════════════════════════════════════
+     HEADER
+     ═══════════════════════════════════════ -->
+<header class="app-header" role="banner">
+  <div class="header-inner">
+    <!-- Emblema brújula (SVG original) -->
+    <svg class="app-emblem" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+      <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="20" cy="20" r="13" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 3"/>
+      <polygon points="20,6 22,20 20,18 18,20" fill="currentColor"/>
+      <polygon points="20,34 22,20 20,22 18,20" fill="currentColor" opacity="0.4"/>
+      <polygon points="6,20 20,18 18,20 20,22" fill="currentColor" opacity="0.4"/>
+      <polygon points="34,20 20,18 22,20 20,22" fill="currentColor"/>
+      <circle cx="20" cy="20" r="2.5" fill="currentColor"/>
+      <circle cx="20" cy="6" r="1.5" fill="currentColor" opacity="0.6"/>
+      <circle cx="20" cy="34" r="1.5" fill="currentColor" opacity="0.6"/>
+      <circle cx="6" cy="20" r="1.5" fill="currentColor" opacity="0.6"/>
+      <circle cx="34" cy="20" r="1.5" fill="currentColor" opacity="0.6"/>
+    </svg>
+
+    <div class="app-title-group">
+      <div class="app-title">Bitácora Vale</div>
+      <div class="app-subtitle">Viaje · Jun 2026 – Ago 2026 · Buenos Aires → Londres → Escocia → Países Bajos → Barcelona</div>
+    </div>
+
+    <!-- Nav principal -->
+    <nav class="main-nav" aria-label="Módulos principales">
+      <button class="nav-btn" aria-current="page" onclick="showTab('agenda')">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="14" height="14" rx="2"/><line x1="7" y1="1" x2="7" y2="5"/><line x1="13" y1="1" x2="13" y2="5"/><line x1="3" y1="8" x2="17" y2="8"/></svg>
+        Agenda
+      </button>
+      <button class="nav-btn" onclick="showTab('dinero')">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10" cy="10" r="8"/><line x1="10" y1="5" x2="10" y2="6.5"/><line x1="10" y1="13.5" x2="10" y2="15"/><path d="M7.5 8.5C7.5 7.4 8.6 6.5 10 6.5s2.5.9 2.5 2-.9 1.5-2.5 2-2.5.9-2.5 2 1.1 2 2.5 2 2.5-.9 2.5-2"/></svg>
+        Dinero
+      </button>
+      <button class="nav-btn" onclick="showTab('habitos')">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 11l2 2 4-4"/><rect x="3" y="3" width="14" height="14" rx="2"/></svg>
+        Hábitos
+      </button>
+      <button class="nav-btn" onclick="showTab('pendientes')">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10" cy="10" r="8"/><line x1="10" y1="6" x2="10" y2="10"/><circle cx="10" cy="13.5" r=".8" fill="currentColor" stroke="none"/></svg>
+        Pendientes
+      </button>
+      <button class="nav-btn" onclick="showTab('casa')">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10L10 3l7 7"/><path d="M5 8v9h4v-4h2v4h4V8"/></svg>
+        En casa
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════
+     LAYOUT
+     ═══════════════════════════════════════ -->
+<div class="app-layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" aria-label="Resumen del viaje">
+
+    <!-- Mini calendario -->
+    <div class="card">
+      <div class="card-header">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1" y="2" width="14" height="13" rx="2"/><line x1="5" y1=".5" x2="5" y2="3.5"/><line x1="11" y1=".5" x2="11" y2="3.5"/><line x1="1" y1="6" x2="15" y2="6"/></svg>
+        <span class="card-title">Junio 2026</span>
+      </div>
+      <div class="card-body">
+        <div class="mini-calendar" role="grid" aria-label="Calendario de junio 2026">
+          <div class="cal-nav">
+            <button class="cal-nav-btn" aria-label="Mes anterior">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8,2 4,6 8,10"/></svg>
+            </button>
+            <span class="cal-month">Junio 2026</span>
+            <button class="cal-nav-btn" aria-label="Mes siguiente">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,2 8,6 4,10"/></svg>
+            </button>
+          </div>
+          <div class="cal-grid" role="row">
+            <div class="cal-day-label" role="columnheader" aria-label="Lunes">L</div>
+            <div class="cal-day-label" role="columnheader" aria-label="Martes">M</div>
+            <div class="cal-day-label" role="columnheader" aria-label="Miércoles">M</div>
+            <div class="cal-day-label" role="columnheader" aria-label="Jueves">J</div>
+            <div class="cal-day-label" role="columnheader" aria-label="Viernes">V</div>
+            <div class="cal-day-label" role="columnheader" aria-label="Sábado">S</div>
+            <div class="cal-day-label" role="columnheader" aria-label="Domingo">D</div>
+            <!-- Row 1 -->
+            <button class="cal-day other-month" role="gridcell" aria-label="1 de mayo">1</button>
+            <button class="cal-day other-month" role="gridcell" aria-label="2 de mayo">2</button>
+            <button class="cal-day other-month" role="gridcell" aria-label="3 de mayo">3</button>
+            <button class="cal-day other-month" role="gridcell" aria-label="4 de mayo">4</button>
+            <button class="cal-day other-month" role="gridcell" aria-label="5 de mayo">5</button>
+            <button class="cal-day other-month" role="gridcell" aria-label="6 de mayo">6</button>
+            <button class="cal-day other-month" role="gridcell" aria-label="7 de mayo">7</button>
+            <!-- Row 2 -->
+            <button class="cal-day other-month" role="gridcell">8</button>
+            <button class="cal-day other-month" role="gridcell">9</button>
+            <button class="cal-day other-month" role="gridcell">10</button>
+            <button class="cal-day other-month" role="gridcell">11</button>
+            <button class="cal-day other-month" role="gridcell">12</button>
+            <button class="cal-day other-month" role="gridcell">13</button>
+            <button class="cal-day other-month" role="gridcell">14</button>
+            <!-- Row 3 — Jun starts -->
+            <button class="cal-day" role="gridcell">1</button>
+            <button class="cal-day" role="gridcell">2</button>
+            <button class="cal-day" role="gridcell">3</button>
+            <button class="cal-day" role="gridcell">4</button>
+            <button class="cal-day trip today" role="gridcell" aria-label="5 de junio, hoy, inicio del viaje" aria-current="date">5</button>
+            <button class="cal-day trip" role="gridcell">6</button>
+            <button class="cal-day trip" role="gridcell">7</button>
+            <!-- Row 4 -->
+            <button class="cal-day trip" role="gridcell">8</button>
+            <button class="cal-day trip" role="gridcell">9</button>
+            <button class="cal-day trip" role="gridcell">10</button>
+            <button class="cal-day trip" role="gridcell">11</button>
+            <button class="cal-day trip" role="gridcell">12</button>
+            <button class="cal-day trip" role="gridcell">13</button>
+            <button class="cal-day trip" role="gridcell">14</button>
+            <!-- Row 5 -->
+            <button class="cal-day trip" role="gridcell">15</button>
+            <button class="cal-day trip" role="gridcell">16</button>
+            <button class="cal-day trip" role="gridcell">17</button>
+            <button class="cal-day trip" role="gridcell">18</button>
+            <button class="cal-day trip" role="gridcell">19</button>
+            <button class="cal-day trip" role="gridcell">20</button>
+            <button class="cal-day trip" role="gridcell">21</button>
+            <!-- Row 6 -->
+            <button class="cal-day trip" role="gridcell">22</button>
+            <button class="cal-day trip" role="gridcell">23</button>
+            <button class="cal-day trip" role="gridcell">24</button>
+            <button class="cal-day trip" role="gridcell">25</button>
+            <button class="cal-day trip" role="gridcell">26</button>
+            <button class="cal-day trip" role="gridcell">27</button>
+            <button class="cal-day trip" role="gridcell">28</button>
+            <!-- Row 7 -->
+            <button class="cal-day trip" role="gridcell">29</button>
+            <button class="cal-day trip" role="gridcell">30</button>
+          </div>
+        </div>
+
+        <!-- Contador de días -->
+        <div class="days-counter">
+          <div class="days-num">65</div>
+          <div class="days-label">días de aventura</div>
+          <div class="progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="65" aria-label="Progreso del viaje: día 1 de 65">
+            <div class="progress-bar" style="width: 2%"></div>
+          </div>
+          <div style="font-size:0.7rem; color: var(--text-muted); margin-top: var(--s2);">Día 1 de 65 · 5 jun → 8 ago 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Itinerario -->
+    <div class="card">
+      <div class="card-header">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="6" r="3"/><path d="M8 16C8 16 2 11 2 6a6 6 0 0 1 12 0c0 5-6 10-6 10z"/></svg>
+        <span class="card-title">Itinerario</span>
+      </div>
+      <div class="card-body">
+        <ul class="itinerary-list" aria-label="Destinos del viaje">
+          <li class="itinerary-item">
+            <span class="itinerary-dot" aria-hidden="true"></span>
+            <div>
+              <div class="itinerary-place">🇦🇷 Buenos Aires</div>
+              <div class="itinerary-dates">5 – 8 jun</div>
+            </div>
+            <span class="currency-chip">ARS</span>
+          </li>
+          <li class="itinerary-item">
+            <span class="itinerary-dot" aria-hidden="true"></span>
+            <div>
+              <div class="itinerary-place">🇬🇧 Londres</div>
+              <div class="itinerary-dates">9 jun – 1 jul</div>
+            </div>
+            <span class="currency-chip">GBP</span>
+          </li>
+          <li class="itinerary-item">
+            <span class="itinerary-dot" aria-hidden="true"></span>
+            <div>
+              <div class="itinerary-place">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia</div>
+              <div class="itinerary-dates">2 – 18 jul</div>
+            </div>
+            <span class="currency-chip">GBP</span>
+          </li>
+          <li class="itinerary-item">
+            <span class="itinerary-dot" aria-hidden="true"></span>
+            <div>
+              <div class="itinerary-place">🇳🇱 Países Bajos</div>
+              <div class="itinerary-dates">19 – 28 jul</div>
+            </div>
+            <span class="currency-chip">EUR</span>
+          </li>
+          <li class="itinerary-item">
+            <span class="itinerary-dot" aria-hidden="true"></span>
+            <div>
+              <div class="itinerary-place">🇪🇸 Barcelona</div>
+              <div class="itinerary-dates">29 jul – 8 ago</div>
+            </div>
+            <span class="currency-chip">EUR</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ── ÁREA PRINCIPAL ── -->
+  <main class="main-area" id="main-content" tabindex="-1">
+
+    <!-- TABS -->
+    <div class="tabs-container">
+      <div class="tablist" role="tablist" aria-label="Módulos de la bitácora">
+        <button class="tab-btn" role="tab" aria-selected="true" aria-controls="tab-agenda" id="btn-agenda" tabindex="0">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1" y="1" width="14" height="14" rx="2"/><line x1="5" y1="0" x2="5" y2="4"/><line x1="11" y1="0" x2="11" y2="4"/><line x1="1" y1="5.5" x2="15" y2="5.5"/></svg>
+          Agenda
+        </button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-dinero" id="btn-dinero" tabindex="-1">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="8" r="7"/><line x1="8" y1="3.5" x2="8" y2="5"/><line x1="8" y1="11" x2="8" y2="12.5"/><path d="M5.5 6.8C5.5 5.8 6.6 5 8 5s2.5.8 2.5 1.8-.8 1.4-2.5 1.8-2.5.8-2.5 1.8 1.1 1.8 2.5 1.8 2.5-.8 2.5-1.8"/></svg>
+          Dinero
+        </button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-habitos" id="btn-habitos" tabindex="-1">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 9l2 2 4-4"/><rect x="1" y="1" width="14" height="14" rx="2"/></svg>
+          Hábitos
+        </button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-pendientes" id="btn-pendientes" tabindex="-1">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="8" r="7"/><line x1="8" y1="4" x2="8" y2="8.5"/><circle cx="8" cy="11" r=".8" fill="currentColor" stroke="none"/></svg>
+          Pendientes
+        </button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-casa" id="btn-casa" tabindex="-1">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M1 8L8 1l7 7"/><path d="M3 6.5v7.5h4V10h2v4h4V6.5"/></svg>
+          En casa
+        </button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-diseno" id="btn-diseno" tabindex="-1">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="8" r="7"/><circle cx="8" cy="8" r="2"/><line x1="8" y1="1" x2="8" y2="4"/><line x1="8" y1="12" x2="8" y2="15"/></svg>
+          Diseño
+        </button>
+      </div>
+
+      <!-- ═══ TAB: AGENDA ═══ -->
+      <div id="tab-agenda" role="tabpanel" aria-labelledby="btn-agenda" class="tabpanel">
+
+        <!-- Barra de navegación del día -->
+        <div class="agenda-daybar" aria-label="Navegación del día">
+          <button class="daybar-nav-btn" aria-label="Día anterior">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="10,3 6,8 10,13"/></svg>
+          </button>
+
+          <div class="daybar-day-num" aria-hidden="true">1</div>
+
+          <div class="daybar-info">
+            <div class="daybar-date">Viernes, 5 de junio de 2026</div>
+            <div class="daybar-meta">
+              <span class="location-chip">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="5" cy="4" r="2"/><path d="M5 9C5 9 1 6 1 4a4 4 0 0 1 8 0c0 2-4 5-4 5z"/></svg>
+                🇦🇷 Buenos Aires · ARS
+              </span>
+              <span>Día 1 de 65</span>
+              <span>· ¡Empezamos!</span>
+            </div>
+          </div>
+
+          <button class="daybar-nav-btn" aria-label="Día siguiente">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="6,3 10,8 6,13"/></svg>
+          </button>
+        </div>
+
+        <!-- Ítems del día -->
+        <div class="ornament" aria-hidden="true">✦ ✦ ✦</div>
+
+        <div class="agenda-items" aria-label="Ítems del día 5 de junio">
+
+          <article class="agenda-item" aria-label="Ítem: Vuelo a Londres">
+            <div class="item-time" aria-label="Hora: 23:50">23:50</div>
+            <div class="item-content">
+              <div class="item-title">✈ Vuelo a Londres — Heathrow</div>
+              <div class="item-desc">Aerolíneas Argentinas AR1100. Partida desde EZE T-D. Llegada estimada 6 jun 16:10 LHR.</div>
+              <div class="item-tags">
+                <span class="type-badge type-logistica">Logística</span>
+              </div>
+            </div>
+            <div class="item-amount" aria-label="Sin costo registrado">—</div>
+          </article>
+
+          <article class="agenda-item" aria-label="Ítem: Empaque final">
+            <div class="item-time" aria-label="Hora: 10:00">10:00</div>
+            <div class="item-content">
+              <div class="item-title">Empaque final y lista de control</div>
+              <div class="item-desc">Documentos, medicamentos, cargadores, adaptadores UK. Revisar seguro de viaje vigente.</div>
+              <div class="item-tags">
+                <span class="type-badge type-logistica">Logística</span>
+              </div>
+            </div>
+            <div class="item-amount">—</div>
+          </article>
+
+          <article class="agenda-item" aria-label="Ítem: Almuerzo familiar">
+            <div class="item-time" aria-label="Hora: 13:00">13:00</div>
+            <div class="item-content">
+              <div class="item-title">Almuerzo despedida con la familia</div>
+              <div class="item-desc">Casa de mamá y papá. Traer los regalitos que compraste para llevar.</div>
+              <div class="item-tags">
+                <span class="type-badge type-casa">Casa</span>
+              </div>
+            </div>
+            <div class="item-amount">—</div>
+          </article>
+
+          <article class="agenda-item" aria-label="Ítem: Cambio de divisas">
+            <div class="item-time" aria-label="Hora: 16:00">16:00</div>
+            <div class="item-content">
+              <div class="item-title">Retiro de efectivo / cambio de divisas</div>
+              <div class="item-desc">Llevar algo de libras en efectivo para los primeros días en Londres.</div>
+              <div class="item-tags">
+                <span class="type-badge type-gasto">Gasto</span>
+              </div>
+            </div>
+            <div class="item-amount" aria-label="Monto: 200 libras">
+              £ 200
+              <span class="amount-ars">≈ $ 320.000 ARS</span>
+            </div>
+          </article>
+
+          <article class="agenda-item" aria-label="Ítem: Meditación mañana">
+            <div class="item-time" aria-label="Hora: 07:30">07:30</div>
+            <div class="item-content">
+              <div class="item-title">Meditación · 10 min</div>
+              <div class="item-desc">Arrancar el viaje con calma. Respirar hondo antes del caos del aeropuerto.</div>
+              <div class="item-tags">
+                <span class="type-badge type-habito">Hábito</span>
+              </div>
+            </div>
+            <div class="item-amount">—</div>
+          </article>
+
+        </div>
+
+        <!-- Separador -->
+        <div class="rule-ornament" aria-hidden="true">
+          <span class="rule-ornament-text">✦ Nota del día ✦</span>
+        </div>
+
+        <!-- Nota libre -->
+        <div class="day-note">
+          <div class="day-note-label">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 2h8v8H2z"/><line x1="4" y1="5" x2="8" y2="5"/><line x1="4" y1="7" x2="6" y2="7"/></svg>
+            Espacio libre
+          </div>
+          <label for="day-note-text" class="sr-only">Nota libre del día 5 de junio</label>
+          <textarea id="day-note-text" placeholder="¿Qué querés recordar de este día? Sentimientos, ideas, lo que sea…" aria-multiline="true"></textarea>
+        </div>
+
+        <!-- Acciones -->
+        <div class="agenda-actions">
+          <button class="btn btn-primary" aria-label="Agregar ítem al día 5 de junio">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg>
+            Agregar ítem
+          </button>
+          <button class="btn btn-ghost">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="8" cy="8" r="7"/><line x1="8" y1="5" x2="8" y2="8"/><circle cx="8" cy="11" r=".8" fill="currentColor" stroke="none"/></svg>
+            Agregar recordatorio
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ═══ TAB: DINERO ═══ -->
+      <div id="tab-dinero" role="tabpanel" aria-labelledby="btn-dinero" class="tabpanel" hidden>
+
+        <div class="money-grid">
+
+          <!-- CONVERSOR -->
+          <div class="converter-card">
+            <div class="converter-header">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 8h12M14 5l3 3-3 3M16 12H4M6 9l-3 3 3 3"/></svg>
+              <span class="converter-title">Conversor multimoneda</span>
+            </div>
+            <div class="converter-body">
+
+              <div class="currency-input-group">
+                <label for="ars-input">
+                  <span class="currency-flag" aria-hidden="true">🇦🇷</span>
+                  Peso argentino (ARS)
+                </label>
+                <div class="currency-input-wrap">
+                  <span class="currency-symbol" aria-hidden="true">$</span>
+                  <input type="number" id="ars-input" value="100000" min="0" aria-label="Monto en pesos argentinos" inputmode="decimal" oninput="convertCurrency('ars', this.value)" />
+                </div>
+              </div>
+
+              <div class="currency-input-group">
+                <label for="gbp-input">
+                  <span class="currency-flag" aria-hidden="true">🇬🇧</span>
+                  Libra esterlina (GBP)
+                </label>
+                <div class="currency-input-wrap">
+                  <span class="currency-symbol" aria-hidden="true">£</span>
+                  <input type="number" id="gbp-input" value="62.5" min="0" aria-label="Monto en libras esterlinas" inputmode="decimal" oninput="convertCurrency('gbp', this.value)" />
+                </div>
+              </div>
+
+              <div class="currency-input-group">
+                <label for="eur-input">
+                  <span class="currency-flag" aria-hidden="true">🇪🇺</span>
+                  Euro (EUR)
+                </label>
+                <div class="currency-input-wrap">
+                  <span class="currency-symbol" aria-hidden="true">€</span>
+                  <input type="number" id="eur-input" value="73.2" min="0" aria-label="Monto en euros" inputmode="decimal" oninput="convertCurrency('eur', this.value)" />
+                </div>
+              </div>
+
+              <div class="converter-results" aria-live="polite" aria-atomic="true" aria-label="Equivalencias">
+                <div class="result-row">
+                  <span class="result-currency">🇦🇷 ARS</span>
+                  <span class="result-amount primary" id="result-ars">$ 100.000</span>
+                </div>
+                <div class="result-row">
+                  <span class="result-currency">🇬🇧 GBP</span>
+                  <span class="result-amount" id="result-gbp">£ 62,50</span>
+                </div>
+                <div class="result-row">
+                  <span class="result-currency">🇪🇺 EUR</span>
+                  <span class="result-amount" id="result-eur">€ 73,20</span>
+                </div>
+              </div>
+
+              <div class="rate-info">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="6" cy="6" r="5"/><line x1="6" y1="4" x2="6" y2="6"/><circle cx="6" cy="8.5" r=".5" fill="currentColor" stroke="none"/></svg>
+                Tasas orientativas · <span class="rate-badge">Actualizado hoy</span> · 1 USD ≈ ARS 1.600 · GBP 0,79 · EUR 0,93
+                <button class="btn btn-ghost" style="font-size:0.75rem; padding: 4px 10px; min-height:30px; margin-left: auto;" aria-label="Editar tasas de cambio manualmente">Editar tasas</button>
+              </div>
+
+              <!-- Estimador costo real en ARS -->
+              <div class="estimator-section">
+                <div class="rule-ornament" style="margin: var(--s4) 0;" aria-hidden="true">
+                  <span class="rule-ornament-text">✦ Costo real en ARS ✦</span>
+                </div>
+
+                <div class="segment-tabs" role="group" aria-label="Tramo del viaje">
+                  <button class="segment-btn active" aria-pressed="true">🇬🇧 Londres / Escocia</button>
+                  <button class="segment-btn" aria-pressed="false">🇳🇱🇪🇸 Países Bajos / BCN</button>
+                </div>
+
+                <div class="estimator-label">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="1"/><line x1="3" y1="4" x2="9" y2="4"/><line x1="3" y1="7" x2="7" y2="7"/></svg>
+                  Desglose impositivo (tarjeta en el exterior)
+                </div>
+
+                <div class="estimator-row">
+                  <span>Monto base (GBP → ARS)</span>
+                  <span>$ 100.000</span>
+                </div>
+                <div class="estimator-row">
+                  <span>IVA destino (UK ~20%) <span class="muted">referencia</span></span>
+                  <span>$ 20.000</span>
+                </div>
+                <div class="estimator-row">
+                  <span>Percepción / Impuesto PAIS <span class="muted">configurable</span></span>
+                  <span id="imp-pais">$ 30.000</span>
+                </div>
+                <div class="estimator-row">
+                  <span>Percepción Ganancias <span class="muted">configurable</span></span>
+                  <span id="imp-ganancias">$ 45.000</span>
+                </div>
+                <div class="estimator-row total">
+                  <span>Total estimado en ARS</span>
+                  <span>$ 195.000</span>
+                </div>
+                <div class="estimator-row">
+                  <span style="color:var(--type-habit)">Posible Tax-Free (VAT ~20%) 🇬🇧</span>
+                  <span style="color:var(--type-habit)">+ £ 12,50</span>
+                </div>
+
+                <div class="disclaimer" role="note">
+                  Las alícuotas impositivas sobre consumos en el exterior varían según el medio de pago y pueden cambiar. Este cálculo es orientativo —no es asesoramiento fiscal. Revisá los valores vigentes antes de operar.
+                </div>
+
+                <button class="btn btn-ghost" style="margin-top:var(--s3); width:100%; justify-content:center;" aria-label="Configurar porcentajes impositivos">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.2 3.2l1.4 1.4M11.4 11.4l1.4 1.4M3.2 12.8l1.4-1.4M11.4 4.6l1.4-1.4"/></svg>
+                  Configurar porcentajes
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- PRESUPUESTO -->
+          <div class="budget-card">
+            <div class="budget-header">
+              <div class="budget-header-left">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="3" width="16" height="14" rx="2"/><line x1="2" y1="7" x2="18" y2="7"/><line x1="6" y1="3" x2="6" y2="7"/><line x1="14" y1="3" x2="14" y2="7"/></svg>
+                <span class="budget-title">Presupuesto por categoría</span>
+              </div>
+              <div>
+                <button class="btn" style="background:rgba(184,144,42,0.2); color:var(--brass-light); font-size:0.8rem; padding: var(--s2) var(--s3); min-height:36px;" aria-label="Editar presupuesto">
+                  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9.5 1.5l3 3L4 13H1v-3L9.5 1.5z"/></svg>
+                  Editar
+                </button>
+              </div>
+            </div>
+            <div class="budget-body">
+
+              <div class="segment-tabs" role="group" aria-label="Vista de presupuesto">
+                <button class="segment-btn active" aria-pressed="true">Todo el viaje</button>
+                <button class="segment-btn" aria-pressed="false">🇬🇧 Londres</button>
+                <button class="segment-btn" aria-pressed="false">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia</button>
+                <button class="segment-btn" aria-pressed="false">🇳🇱 Países Bajos</button>
+                <button class="segment-btn" aria-pressed="false">🇪🇸 Barcelona</button>
+              </div>
+
+              <div class="budget-categories" aria-label="Categorías de presupuesto">
+
+                <div class="budget-cat">
+                  <div class="budget-cat-header">
+                    <span class="budget-cat-name">
+                      <span class="type-badge type-gasto">Alojamiento</span>
+                    </span>
+                    <span class="budget-cat-amounts">
+                      <strong>$ 180.000</strong> / $ 300.000 ARS
+                    </span>
+                  </div>
+                  <div class="budget-bar-bg">
+                    <div class="budget-bar-fill" style="width:60%" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" aria-label="Alojamiento: 60% del presupuesto usado"></div>
+                  </div>
+                </div>
+
+                <div class="budget-cat">
+                  <div class="budget-cat-header">
+                    <span class="budget-cat-name">
+                      <span class="type-badge type-turismo">Turismo y paseos</span>
+                    </span>
+                    <span class="budget-cat-amounts">
+                      <strong>$ 45.000</strong> / $ 150.000 ARS
+                    </span>
+                  </div>
+                  <div class="budget-bar-bg">
+                    <div class="budget-bar-fill" style="width:30%" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" aria-label="Turismo: 30% del presupuesto usado"></div>
+                  </div>
+                </div>
+
+                <div class="budget-cat">
+                  <div class="budget-cat-header">
+                    <span class="budget-cat-name">
+                      <span class="type-badge type-casa">Comida y cafés</span>
+                    </span>
+                    <span class="budget-cat-amounts">
+                      <strong>$ 220.000</strong> / $ 200.000 ARS
+                    </span>
+                  </div>
+                  <div class="budget-bar-bg">
+                    <div class="budget-bar-fill over" style="width:100%" role="progressbar" aria-valuenow="110" aria-valuemin="0" aria-valuemax="100" aria-label="Comida: presupuesto superado, 110%"></div>
+                  </div>
+                </div>
+
+                <div class="budget-cat">
+                  <div class="budget-cat-header">
+                    <span class="budget-cat-name">
+                      <span class="type-badge type-logistica">Transporte</span>
+                    </span>
+                    <span class="budget-cat-amounts">
+                      <strong>$ 80.000</strong> / $ 250.000 ARS
+                    </span>
+                  </div>
+                  <div class="budget-bar-bg">
+                    <div class="budget-bar-fill" style="width:32%" role="progressbar" aria-valuenow="32" aria-valuemin="0" aria-valuemax="100" aria-label="Transporte: 32% del presupuesto usado"></div>
+                  </div>
+                </div>
+
+                <div class="budget-cat">
+                  <div class="budget-cat-header">
+                    <span class="budget-cat-name">
+                      <span class="type-badge type-academico">Académico</span>
+                    </span>
+                    <span class="budget-cat-amounts">
+                      <strong>$ 0</strong> / $ 80.000 ARS
+                    </span>
+                  </div>
+                  <div class="budget-bar-bg">
+                    <div class="budget-bar-fill" style="width:0%" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Académico: 0% del presupuesto usado"></div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div style="margin-top: var(--s5); padding-top: var(--s4); border-top: 1px solid var(--parchment-3); display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-family: var(--font-title); font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Total gastado</span>
+                <span style="font-family: var(--font-ui); font-size: 1.4rem; font-weight: 700; color: var(--ink);">$ 525.000 <span style="font-size:0.8rem; color:var(--text-muted);">/ $ 980.000 ARS</span></span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ═══ TAB: HÁBITOS ═══ -->
+      <div id="tab-habitos" role="tabpanel" aria-labelledby="btn-habitos" class="tabpanel" hidden>
+        <div class="rule-ornament" aria-hidden="true" style="margin-top:0">
+          <span class="rule-ornament-text">✦ Esta semana ✦</span>
+        </div>
+
+        <div class="habit-item">
+          <div class="habit-header">
+            <span class="habit-name">☀ Meditación matutina</span>
+            <span class="streak-chip" role="status" aria-label="Racha: 12 días">🔥 12 días</span>
+          </div>
+          <div class="habit-dots" role="group" aria-label="Últimos 7 días">
+            <button class="habit-dot done" aria-label="Lunes: completado" aria-pressed="true">L</button>
+            <button class="habit-dot done" aria-label="Martes: completado" aria-pressed="true">M</button>
+            <button class="habit-dot done" aria-label="Miércoles: completado" aria-pressed="true">M</button>
+            <button class="habit-dot done" aria-label="Jueves: completado" aria-pressed="true">J</button>
+            <button class="habit-dot done" aria-label="Viernes: completado" aria-pressed="true">V</button>
+            <button class="habit-dot" aria-label="Sábado: pendiente" aria-pressed="false">S</button>
+            <button class="habit-dot today" aria-label="Hoy: pendiente" aria-pressed="false">H</button>
+          </div>
+        </div>
+
+        <div class="habit-item">
+          <div class="habit-header">
+            <span class="habit-name">📖 Lectura — 20 min</span>
+            <span class="streak-chip" role="status" aria-label="Racha: 5 días">🔥 5 días</span>
+          </div>
+          <div class="habit-dots" role="group" aria-label="Últimos 7 días">
+            <button class="habit-dot" aria-label="Lunes: no completado" aria-pressed="false">L</button>
+            <button class="habit-dot done" aria-label="Martes: completado" aria-pressed="true">M</button>
+            <button class="habit-dot done" aria-label="Miércoles: completado" aria-pressed="true">M</button>
+            <button class="habit-dot done" aria-label="Jueves: completado" aria-pressed="true">J</button>
+            <button class="habit-dot done" aria-label="Viernes: completado" aria-pressed="true">V</button>
+            <button class="habit-dot done" aria-label="Sábado: completado" aria-pressed="true">S</button>
+            <button class="habit-dot today" aria-label="Hoy: pendiente" aria-pressed="false">H</button>
+          </div>
+        </div>
+
+        <div class="habit-item">
+          <div class="habit-header">
+            <span class="habit-name">✍ Avance de tesis — al menos un párrafo</span>
+            <span class="streak-chip" role="status" aria-label="Racha: 3 días">🔥 3 días</span>
+          </div>
+          <div class="habit-dots" role="group" aria-label="Últimos 7 días">
+            <button class="habit-dot" aria-label="Lunes: no completado" aria-pressed="false">L</button>
+            <button class="habit-dot" aria-label="Martes: no completado" aria-pressed="false">M</button>
+            <button class="habit-dot" aria-label="Miércoles: no completado" aria-pressed="false">M</button>
+            <button class="habit-dot done" aria-label="Jueves: completado" aria-pressed="true">J</button>
+            <button class="habit-dot done" aria-label="Viernes: completado" aria-pressed="true">V</button>
+            <button class="habit-dot done" aria-label="Sábado: completado" aria-pressed="true">S</button>
+            <button class="habit-dot today" aria-label="Hoy: pendiente" aria-pressed="false">H</button>
+          </div>
+        </div>
+
+        <div class="agenda-actions" style="margin-top: var(--s5);">
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg>
+            Nuevo hábito
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: PENDIENTES ═══ -->
+      <div id="tab-pendientes" role="tabpanel" aria-labelledby="btn-pendientes" class="tabpanel" hidden>
+        <div class="rule-ornament" aria-hidden="true" style="margin-top:0">
+          <span class="rule-ornament-text">✦ Trámites a distancia ✦</span>
+        </div>
+
+        <div class="reminders-list" aria-label="Lista de pendientes remotos">
+          <div class="reminder-item">
+            <div class="reminder-icon" aria-hidden="true">📋</div>
+            <div class="reminder-text">
+              <div class="reminder-title">Enviar formulario revisión tesis al director</div>
+              <div class="reminder-when">Vence: 15 jun 2026</div>
+            </div>
+            <span class="reminder-urgency urgency-alta">Alta</span>
+          </div>
+          <div class="reminder-item">
+            <div class="reminder-icon" aria-hidden="true">💳</div>
+            <div class="reminder-text">
+              <div class="reminder-title">Verificar débito automático cuotas del auto</div>
+              <div class="reminder-when">Vence: 1 jul 2026</div>
+            </div>
+            <span class="reminder-urgency urgency-media">Media</span>
+          </div>
+          <div class="reminder-item">
+            <div class="reminder-icon" aria-hidden="true">📬</div>
+            <div class="reminder-text">
+              <div class="reminder-title">Renovar domicilio fiscal — AFIP</div>
+              <div class="reminder-when">Sin fecha límite definida</div>
+            </div>
+            <span class="reminder-urgency urgency-baja">Baja</span>
+          </div>
+        </div>
+
+        <div class="agenda-actions" style="margin-top: var(--s5);">
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg>
+            Agregar pendiente
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: EN CASA ═══ -->
+      <div id="tab-casa" role="tabpanel" aria-labelledby="btn-casa" class="tabpanel" hidden>
+        <div class="rule-ornament" aria-hidden="true" style="margin-top:0">
+          <span class="rule-ornament-text">✦ Tu gente y tus peludos ✦</span>
+        </div>
+
+        <div class="reminders-list" aria-label="Personas y mascotas en casa">
+          <div class="reminder-item">
+            <div class="reminder-icon" aria-hidden="true">👩</div>
+            <div class="reminder-text">
+              <div class="reminder-title">Mamá</div>
+              <div class="reminder-when" aria-live="polite">Hace 3 días que no hablás con ella 💛</div>
+            </div>
+            <button class="btn btn-ghost" style="font-size:0.75rem; padding: var(--s2) var(--s3); min-height:36px;" aria-label="Marcar llamada con mamá como realizada">Llamé ✓</button>
+          </div>
+          <div class="reminder-item">
+            <div class="reminder-icon" aria-hidden="true">👨</div>
+            <div class="reminder-text">
+              <div class="reminder-title">Papá</div>
+              <div class="reminder-when">Hablaste ayer 💙</div>
+            </div>
+            <button class="btn btn-ghost" style="font-size:0.75rem; padding: var(--s2) var(--s3); min-height:36px;" aria-label="Marcar llamada con papá como realizada">Llamé ✓</button>
+          </div>
+          <div class="reminder-item">
+            <div class="reminder-icon" aria-hidden="true">🐶</div>
+            <div class="reminder-text">
+              <div class="reminder-title">Indi</div>
+              <div class="reminder-when">Pablito la cuida — recordá mandarle foto mañana 🐾</div>
+            </div>
+            <span class="reminder-urgency urgency-baja">En buenos manos</span>
+          </div>
+          <div class="reminder-item">
+            <div class="reminder-icon" aria-hidden="true">🐱</div>
+            <div class="reminder-text">
+              <div class="reminder-title">Benji</div>
+              <div class="reminder-when">Rosa lo visita todos los días — todo bien 🐾</div>
+            </div>
+            <span class="reminder-urgency urgency-baja">En buenos manos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: DISEÑO (Sistema de tokens) ═══ -->
+      <div id="tab-diseno" role="tabpanel" aria-labelledby="btn-diseno" class="tabpanel" hidden>
+        <div class="design-showcase">
+
+          <h2 style="font-family: var(--font-title); font-size: 1.5rem; color: var(--ink); margin-bottom: var(--s6); border-bottom: 2px solid var(--brass); padding-bottom: var(--s3);">
+            Sistema de Diseño — Bitácora Vale
+          </h2>
+
+          <!-- PALETA -->
+          <section class="showcase-section" aria-labelledby="ds-paleta">
+            <h3 class="showcase-title" id="ds-paleta">Paleta de color</h3>
+            <div class="color-swatches">
+              <div class="swatch"><div class="swatch-color" style="background:#1a2744"></div><div class="swatch-name">Ink</div><div class="swatch-value">#1a2744</div></div>
+              <div class="swatch"><div class="swatch-color" style="background:#253660"></div><div class="swatch-name">Ink Mid</div><div class="swatch-value">#253660</div></div>
+              <div class="swatch"><div class="swatch-color" style="background:#3d5282"></div><div class="swatch-name">Ink Soft</div><div class="swatch-value">#3d5282</div></div>
+              <div class="swatch"><div class="swatch-color" style="background:#b8902a"></div><div class="swatch-name">Brass</div><div class="swatch-value">#b8902a</div></div>
+              <div class="swatch"><div class="swatch-color" style="background:#d4aa4a"></div><div class="swatch-name">Brass Light</div><div class="swatch-value">#d4aa4a</div></div>
+              <div class="swatch"><div class="swatch-color" style="background:#f0e0a8"></div><div class="swatch-name">Brass Pale</div><div class="swatch-value">#f0e0a8</div></div>
+              <div class="swatch"><div class="swatch-color" style="background:#faf6ee; border:1px solid #ece4cc"></div><div class="swatch-name">Parchment</div><div class="swatch-value">#faf6ee</div></div>
+              <div class="swatch"><div class="swatch-color" style="background:#f4edd8; border:1px solid #ece4cc"></div><div class="swatch-name">Parchment 2</div><div class="swatch-value">#f4edd8</div></div>
+            </div>
+          </section>
+
+          <!-- TIPOGRAFÍA -->
+          <section class="showcase-section" aria-labelledby="ds-tipo">
+            <h3 class="showcase-title" id="ds-tipo">Tipografía</h3>
+            <div style="display:flex; flex-direction:column; gap: var(--s5);">
+              <div>
+                <div style="font-family:var(--font-title); font-size:2rem; font-weight:700; color:var(--ink);">Cinzel — Título principal</div>
+                <div style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-ui);">Cinzel 700 · Títulos, nav, badges</div>
+              </div>
+              <div>
+                <div style="font-family:var(--font-title); font-size:1.2rem; font-weight:600; color:var(--ink); letter-spacing:0.1em; text-transform:uppercase;">CINZEL SUBTÍTULO</div>
+                <div style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-ui);">Cinzel 600 uppercase · Secciones, etiquetas</div>
+              </div>
+              <div>
+                <div style="font-family:var(--font-body); font-size:1.1rem; color:var(--text-body); line-height:1.7;">EB Garamond — Texto de lectura. Una bitácora de viaje escrita con la caligrafía de quien mira el mundo con curiosidad y lo anota todo con cariño. Cada página, una historia.</div>
+                <div style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-ui);">EB Garamond 400/500 · Cuerpo, notas, descripciones</div>
+              </div>
+              <div>
+                <div style="font-family:var(--font-body); font-size:1rem; color:var(--text-body); font-style:italic;">EB Garamond itálica — para notas afectivas, citas y recordatorios especiales.</div>
+                <div style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-ui);">EB Garamond 400 italic</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- TIPOS DE ÍTEM -->
+          <section class="showcase-section" aria-labelledby="ds-tipos">
+            <h3 class="showcase-title" id="ds-tipos">Tipos de ítem</h3>
+            <div class="type-badges-demo">
+              <div class="type-badge-demo" style="background:var(--type-tourism-bg);">
+                <span class="tb-name type-badge type-turismo">Turismo</span>
+                <span class="tb-example" style="color:var(--type-tourism);">Visitar el Museo Británico</span>
+              </div>
+              <div class="type-badge-demo" style="background:var(--type-academic-bg);">
+                <span class="tb-name type-badge type-academico">Académico</span>
+                <span class="tb-example" style="color:var(--type-academic);">Reunión con directora de tesis</span>
+              </div>
+              <div class="type-badge-demo" style="background:var(--type-habit-bg);">
+                <span class="tb-name type-badge type-habito">Hábito</span>
+                <span class="tb-example" style="color:var(--type-habit);">Meditación 10 min</span>
+              </div>
+              <div class="type-badge-demo" style="background:var(--type-expense-bg);">
+                <span class="tb-name type-badge type-gasto">Gasto</span>
+                <span class="tb-example" style="color:var(--type-expense);">Cena en Borough Market · £ 28</span>
+              </div>
+              <div class="type-badge-demo" style="background:var(--type-home-bg);">
+                <span class="tb-name type-badge type-casa">Casa</span>
+                <span class="tb-example" style="color:var(--type-home);">Llamar a mamá</span>
+              </div>
+              <div class="type-badge-demo" style="background:var(--type-logistics-bg);">
+                <span class="tb-name type-badge type-logistica">Logística</span>
+                <span class="tb-example" style="color:var(--type-logistics);">Check-in vuelo LHR</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- BOTONES -->
+          <section class="showcase-section" aria-labelledby="ds-botones">
+            <h3 class="showcase-title" id="ds-botones">Componentes</h3>
+            <div style="display:flex; gap: var(--s3); flex-wrap:wrap; margin-bottom: var(--s4);">
+              <button class="btn btn-primary">Primario</button>
+              <button class="btn btn-gold">Dorado</button>
+              <button class="btn btn-ghost">Fantasma</button>
+            </div>
+            <div style="display:flex; gap: var(--s3); flex-wrap:wrap;">
+              <span class="currency-chip">ARS</span>
+              <span class="currency-chip">GBP</span>
+              <span class="currency-chip">EUR</span>
+              <span class="reminder-urgency urgency-alta">Alta</span>
+              <span class="reminder-urgency urgency-media">Media</span>
+              <span class="reminder-urgency urgency-baja">Baja</span>
+              <span class="streak-chip">🔥 12 días</span>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+    </div><!-- /tabs-container -->
+
+  </main>
+</div><!-- /app-layout -->
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer class="app-footer" role="contentinfo">
+  <div class="footer-emblem" aria-hidden="true">✦ ⊙ ✦</div>
+  <p style="margin-top:var(--s2);">Bitácora Vale · Jun–Ago 2026 · <em>Que cada día sea una página que valga la pena leer.</em></p>
+</footer>
+
+<!-- ════════════════════════════════════
+     JAVASCRIPT MÍNIMO DE MAQUETA
+     ════════════════════════════════════ -->
+<script>
+  /* ── Navegación de tabs con teclado ── */
+  const tabButtons = document.querySelectorAll('[role="tab"]');
+  const tabPanels  = document.querySelectorAll('[role="tabpanel"]');
+
+  function activateTab(btn) {
+    tabButtons.forEach(b => { b.setAttribute('aria-selected','false'); b.tabIndex = -1; });
+    tabPanels.forEach(p => p.setAttribute('hidden',''));
+    btn.setAttribute('aria-selected','true');
+    btn.tabIndex = 0;
+    const panel = document.getElementById(btn.getAttribute('aria-controls'));
+    panel.removeAttribute('hidden');
+    // Anunciar cambio
+    document.getElementById('live-region').textContent = 'Módulo: ' + btn.textContent.trim();
+  }
+
+  tabButtons.forEach((btn, i) => {
+    btn.addEventListener('click', () => activateTab(btn));
+    btn.addEventListener('keydown', e => {
+      let idx = i;
+      if (e.key === 'ArrowRight') idx = (i + 1) % tabButtons.length;
+      else if (e.key === 'ArrowLeft') idx = (i - 1 + tabButtons.length) % tabButtons.length;
+      else if (e.key === 'Home') idx = 0;
+      else if (e.key === 'End') idx = tabButtons.length - 1;
+      else return;
+      e.preventDefault();
+      tabButtons[idx].focus();
+      activateTab(tabButtons[idx]);
+    });
+  });
+
+  /* ── Nav buttons del header ── */
+  function showTab(name) {
+    const btn = document.getElementById('btn-' + name);
+    if (btn) { activateTab(btn); btn.focus(); }
+    document.querySelectorAll('.nav-btn').forEach(b => b.removeAttribute('aria-current'));
+    const navBtn = [...document.querySelectorAll('.nav-btn')].find(b => b.textContent.trim().toLowerCase() === name);
+    if (navBtn) navBtn.setAttribute('aria-current','page');
+  }
+
+  /* ── Conversor multimoneda ── */
+  // Tasas orientativas (ARS base)
+  const rates = { ars: 1, gbp: 0.000625, eur: 0.000732 };
+
+  function fmt(val, locale, currency) {
+    return new Intl.NumberFormat('es-AR', { style:'currency', currency, minimumFractionDigits:2, maximumFractionDigits:2 }).format(val);
+  }
+
+  function convertCurrency(from, raw) {
+    const val = parseFloat(raw) || 0;
+    const ars = val / rates[from];
+    document.getElementById('ars-input').value = +(ars).toFixed(2);
+    document.getElementById('gbp-input').value = +(ars * rates.gbp).toFixed(4);
+    document.getElementById('eur-input').value = +(ars * rates.eur).toFixed(4);
+    document.getElementById('result-ars').textContent = fmt(ars, 'es-AR', 'ARS');
+    document.getElementById('result-gbp').textContent = fmt(ars * rates.gbp, 'en-GB', 'GBP');
+    document.getElementById('result-eur').textContent = fmt(ars * rates.eur, 'de-DE', 'EUR');
+  }
+
+  /* ── Segment buttons toggle ── */
+  document.querySelectorAll('.segment-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const group = btn.closest('[role="group"]');
+      if (group) {
+        group.querySelectorAll('.segment-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+      }
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed','true');
+    });
+  });
+
+  /* ── Hábito dots toggle ── */
+  document.querySelectorAll('.habit-dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+      const pressed = dot.getAttribute('aria-pressed') === 'true';
+      dot.setAttribute('aria-pressed', !pressed);
+      dot.classList.toggle('done', !pressed);
+    });
+  });
+
+  /* ── Destellos sutiles del tema grimorio ── */
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const sparkField = document.createElement('div');
+  sparkField.className = 'spark-field';
+  sparkField.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(sparkField);
+
+  function makeSpark(x, y) {
+    if (reduceMotion || document.documentElement.getAttribute('data-theme') !== 'dark') return;
+    const spark = document.createElement('span');
+    spark.className = 'spark';
+    spark.style.left = x + 'px';
+    spark.style.top = y + 'px';
+    spark.style.setProperty('--dx', (Math.random() * 44 - 22).toFixed(1) + 'px');
+    sparkField.appendChild(spark);
+    window.setTimeout(() => spark.remove(), 2900);
+  }
+
+  function ambientSpark() {
+    if (document.hidden) return;
+    const anchors = [
+      document.querySelector('.app-title'),
+      document.querySelector('.app-emblem'),
+      document.querySelector('.main-area'),
+      document.querySelector('.daybar')
+    ].filter(Boolean);
+    const anchor = anchors[Math.floor(Math.random() * anchors.length)];
+    const rect = anchor.getBoundingClientRect();
+    makeSpark(rect.left + Math.random() * rect.width, rect.top + Math.random() * Math.min(rect.height, 120));
+  }
+
+  window.setInterval(ambientSpark, 1900);
+  document.querySelectorAll('.nav-btn, .tab-btn, .btn, .daybar-nav-btn, .cal-nav-btn, .segment-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      const rect = el.getBoundingClientRect();
+      makeSpark(rect.left + rect.width * 0.72, rect.top + rect.height * 0.25);
+    });
+  });
+</script>
+</body>
+</html>
