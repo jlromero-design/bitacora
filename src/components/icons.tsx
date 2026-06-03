@@ -228,6 +228,19 @@ export const Pata = (p: P) => (
   <svg {...base(p)} aria-hidden="true"><ellipse cx="12" cy="15" rx="4" ry="3.2" /><circle cx="7" cy="10" r="1.6" /><circle cx="17" cy="10" r="1.6" /><circle cx="9.5" cy="6.5" r="1.5" /><circle cx="14.5" cy="6.5" r="1.5" /></svg>
 );
 
+export const Huella = (p: P) => (
+  <svg {...base(p)} aria-hidden="true">
+    {/* arco externo */}
+    <path d="M6.5 19.5C5 17.5 4 15 4 12a8 8 0 0 1 16 0c0 2-.3 3.8-1 5.5" />
+    {/* arco medio */}
+    <path d="M9 18.5C8 17 7.5 14.8 7.5 12a4.5 4.5 0 0 1 9 0c0 1.8-.4 3.5-1 4.8" />
+    {/* arco interno */}
+    <path d="M11.5 17C11 15.8 10.8 14 10.8 12a1.2 1.2 0 0 1 2.4 0c0 1.6-.2 3.2-.7 4.5" />
+    {/* base / dedo */}
+    <path d="M9.5 8.5A4.4 4.4 0 0 1 12 8" />
+  </svg>
+);
+
 import type { TipoDestino } from "@/lib/types";
 export const ICONO_TIPO: Record<TipoDestino, (p: P) => React.JSX.Element> = {
   vuelo: Avion, estadia: Cama, tour: Mapa, visita: Camara,

@@ -178,6 +178,64 @@ body {
 }
 .animar-subir { animation: subir 0.32s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
+/* ── Destello mágico del logo ── */
+@keyframes destello-giro {
+  0%   { transform: rotate(0deg)   scale(1);    opacity: 0.55; }
+  50%  { transform: rotate(180deg) scale(1.18); opacity: 1;    }
+  100% { transform: rotate(360deg) scale(1);    opacity: 0.55; }
+}
+@keyframes destello-pulso {
+  0%, 100% { opacity: 0; transform: scale(0.6); }
+  50%       { opacity: 1; transform: scale(1);   }
+}
+@keyframes destello-orbita {
+  from { transform: rotate(var(--angulo, 0deg)) translateX(28px) rotate(calc(-1 * var(--angulo, 0deg))); }
+  to   { transform: rotate(calc(var(--angulo, 0deg) + 360deg)) translateX(28px) rotate(calc(-1 * (var(--angulo, 0deg) + 360deg))); }
+}
+.logo-destello-contenedor {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.logo-destello-contenedor::before,
+.logo-destello-contenedor::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 9999px;
+  background: conic-gradient(
+    transparent 0deg,
+    rgba(201,162,75,0.55) 60deg,
+    transparent 120deg,
+    rgba(224,192,116,0.3) 200deg,
+    transparent 260deg,
+    rgba(201,162,75,0.4) 320deg,
+    transparent 360deg
+  );
+  animation: destello-giro 4s linear infinite;
+}
+.logo-destello-contenedor::after {
+  inset: 2px;
+  background: var(--tinta);
+  animation: none;
+}
+.logo-destello-contenedor > * { position: relative; z-index: 1; }
+
+/* Chispas orbitales */
+.chispa {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--laton-claro);
+  box-shadow: 0 0 6px 2px rgba(201,162,75,0.7);
+  animation: destello-orbita 4s linear infinite;
+  z-index: 2;
+}
+.chispa:nth-child(1) { --angulo: 0deg;   animation-delay: 0s; }
+.chispa:nth-child(2) { --angulo: 120deg; animation-delay: -1.33s; width: 3px; height: 3px; }
+.chispa:nth-child(3) { --angulo: 240deg; animation-delay: -2.66s; width: 2px; height: 2px; opacity: 0.7; }
+
 /* ── Botones metalizados (sin colores sólidos) ── */
 .btn-oro {
   background:
