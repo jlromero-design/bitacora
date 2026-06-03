@@ -5,12 +5,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { Cerrar, Brujula } from "@/components/icons";
 import { MENU_PRINCIPAL, MENU_SECUNDARIO } from "./nav-items";
 import { useUI } from "@/lib/ui";
-import { useStore } from "@/lib/store";
 import { createClient } from "@/lib/supabase/client";
 
 export function HamburgerMenu() {
   const { menuOpen, setMenuOpen } = useUI();
-  const { resetAll } = useStore();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -93,18 +91,6 @@ export function HamburgerMenu() {
         </nav>
 
         <div className="mt-auto border-t border-[var(--hairline-soft)] pt-4">
-          <button
-            type="button"
-            onClick={() => {
-              if (confirm("¿Restaurar los datos de ejemplo? Se perderán tus cambios locales.")) {
-                resetAll();
-                setMenuOpen(false);
-              }
-            }}
-            className="w-full rounded-xl px-3 py-2 text-left text-sm text-gris-azul hover:bg-[var(--tinta-3)] hover:text-marfil"
-          >
-            Restaurar datos de ejemplo
-          </button>
           <button
             type="button"
             onClick={cerrarSesion}

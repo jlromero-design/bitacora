@@ -25,11 +25,43 @@ import type {
   Note,
   BudgetAlloc,
 } from "./types";
-import { seedData } from "./seed";
 import { zonaDispositivo } from "./dates";
 
-const STORAGE_KEY = "valejuri:data:v1";
-const SCHEMA_VERSION = 1;
+const STORAGE_KEY = "valejuri:data:v2";
+const SCHEMA_VERSION = 2;
+
+function emptyData(): AppData {
+  return {
+    settings: {
+      secondaryTimezone: "Europe/London",
+      secondaryLabel: "ENG",
+      localLabel: "AR",
+      zodiac: "leo",
+      birthday: "08-03",
+    },
+    trip: {
+      id: "trip-1",
+      createdAt: "2026-01-01T00:00:00.000Z",
+      updatedAt: "2026-01-01T00:00:00.000Z",
+      deletedAt: null,
+      title: "Mi viaje",
+      startsOn: "2026-06-01",
+      endsOn: "2026-08-31",
+      baseCurrency: "ARS",
+    },
+    destinations: [],
+    actions:      [],
+    history:      [],
+    categories:   [],
+    expenses:     [],
+    rates:        [],
+    habits:       [],
+    habitLogs:    [],
+    reminders:    [],
+    notes:        [],
+    budgets:      [],
+  };
+}
 
 function genId(prefix: string): string {
   return `${prefix}-${Date.now().toString(36)}-${Math.random()
@@ -81,7 +113,7 @@ interface StoreCtx {
 const Ctx = createContext<StoreCtx | null>(null);
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const [data, setData] = useState<AppData>(() => seedData());
+  const [data, setData] = useState<AppData>(() => emptyData());
   const [ready, setReady] = useState(false);
 
   // Cargar desde localStorage al montar (cliente)
@@ -91,18 +123,17 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed && parsed.__v === SCHEMA_VERSION && parsed.data) {
-          // merge defensivo: claves nuevas caen al seed; settings se mergea en profundidad
-          const seed = seedData();
+          const base = emptyData();
           const incoming = parsed.data as Partial<AppData>;
           setData({
-            ...seed,
+            ...base,
             ...incoming,
-            settings: { ...seed.settings, ...(incoming.settings ?? {}) },
+            settings: { ...base.settings, ...(incoming.settings ?? {}) },
           });
         }
       }
     } catch {
-      /* datos corruptos → seguimos con seed */
+      /* datos corruptos → estado vacío */
     }
     setReady(true);
   }, []);
@@ -450,7 +481,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const resetAll: StoreCtx["resetAll"] = useCallback(() => {
-    setData(seedData());
+    setData(emptyData());
   }, []);
 
   const value = useMemo<StoreCtx>(
