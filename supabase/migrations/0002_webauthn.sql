@@ -48,5 +48,4 @@ create index if not exists idx_webauthn_creds_user
   on webauthn_credentials(user_id);
 
 create index if not exists idx_webauthn_challenges_email_kind
-  on webauthn_challenges(email, kind)
-  where expires_at > now();
+  on webauthn_challenges(email, kind);
