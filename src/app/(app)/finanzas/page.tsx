@@ -14,6 +14,7 @@ import {
 } from "@/lib/dates";
 import { fetchLiveRates } from "@/lib/quotes";
 import type { Currency, RateKind, BudgetScope } from "@/lib/types";
+import { CATALOGO, categoriaById } from "@/lib/categorias";
 import { PageHeader, SeccionTitulo, Boton, Campo, inputClase, Sheet } from "@/components/ui";
 import { Cambio, Mas, Papelera } from "@/components/icons";
 
@@ -153,15 +154,26 @@ function Presupuesto() {
           <p className="mt-3 text-center font-serif text-sm italic text-gris-azul">Sin gastos cargados acá todavía.</p>
         ) : (
           <ul className="mt-2 flex flex-col gap-1.5">
-            {lista.map((e) => (
-              <li key={e.id} className="flex items-center gap-2 rounded-lg border border-[var(--hairline-soft)] bg-[var(--tinta)] px-3 py-2 text-sm">
-                <div className="min-w-0 flex-1">
-                  <span className="text-marfil">{e.title}</span>
-                  <span className="ml-2 text-xs text-gris-azul-dim">{e.spentOn}</span>
-                </div>
-                <span className="text-finanzas">{fmtMoneda(e.amount, e.currency)}</span>
-              </li>
-            ))}
+            {lista.map((e) => {
+              const cat = e.categoria ? categoriaById(e.categoria) : undefined;
+              return (
+                <li key={e.id} className="flex items-center gap-2 rounded-lg border border-[var(--hairline-soft)] bg-[var(--tinta)] px-3 py-2 text-sm">
+                  {cat && (
+                    <span className="text-base" aria-hidden="true">{cat.emoji}</span>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <span className="text-marfil">{e.title}</span>
+                    {(cat || e.subcategoria) && (
+                      <p className="text-xs text-gris-azul">
+                        {cat?.nombre}{e.subcategoria ? ` · ${e.subcategoria}` : ""}
+                      </p>
+                    )}
+                    <span className="text-xs text-gris-azul-dim">{e.spentOn}</span>
+                  </div>
+                  <span className="text-finanzas shrink-0">{fmtMoneda(e.amount, e.currency)}</span>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
@@ -199,7 +211,14 @@ function CargaPopup({
   const [f, setF] = useState({
     title: "", amount: "", currency: "ARS" as Currency,
     spentOn: refDate, categoryId: "",
+    categoria: "", subcategoria: "",
   });
+
+  const catActual = f.categoria ? categoriaById(f.categoria) : undefined;
+
+  function setCat(id: string) {
+    setF((prev) => ({ ...prev, categoria: id, subcategoria: "" }));
+  }
 
   function guardar() {
     const amount = parseFloat(f.amount);
@@ -209,6 +228,8 @@ function CargaPopup({
         title: f.title.trim(), amount, currency: f.currency, spentOn: f.spentOn,
         amountBase: convertir(amount, f.currency, "ARS", tasas),
         baseCurrency: "ARS", categoryId: f.categoryId || null,
+        categoria: f.categoria || undefined,
+        subcategoria: f.subcategoria || undefined,
       });
     } else {
       onPresupuesto({
@@ -228,6 +249,7 @@ function CargaPopup({
           onChange={(e) => setF({ ...f, title: e.target.value })}
           placeholder={modo === "gasto" ? "Ej: Café en Soho" : "Ej: Comida de la semana"} />
       </Campo>
+
       <div className="grid grid-cols-2 gap-3">
         <Campo label="Monto" htmlFor="cp-amount">
           <input id="cp-amount" type="number" inputMode="decimal" className={inputClase} value={f.amount}
@@ -239,17 +261,50 @@ function CargaPopup({
           </select>
         </Campo>
       </div>
+
       {modo === "gasto" && (
         <Campo label="Fecha" htmlFor="cp-date">
           <input id="cp-date" type="date" className={inputClase} value={f.spentOn} onChange={(e) => setF({ ...f, spentOn: e.target.value })} />
         </Campo>
       )}
-      <Campo label="Categoría (opcional)" htmlFor="cp-cat">
-        <select id="cp-cat" className={inputClase} value={f.categoryId} onChange={(e) => setF({ ...f, categoryId: e.target.value })}>
-          <option value="">— Sin categoría —</option>
-          {categorias.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-        </select>
-      </Campo>
+
+      {/* Selector de categoría del catálogo — solo para gastos */}
+      {modo === "gasto" && (
+        <>
+          <Campo label="Categoría" htmlFor="cp-cat-select">
+            <select
+              id="cp-cat-select"
+              className={inputClase}
+              value={f.categoria}
+              onChange={(e) => setCat(e.target.value)}
+            >
+              <option value="">— Sin categoría —</option>
+              {CATALOGO.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.emoji} {c.nombre}
+                </option>
+              ))}
+            </select>
+          </Campo>
+
+          {catActual && catActual.subcategorias.length > 0 && (
+            <Campo label="Subcategoría" htmlFor="cp-subcat">
+              <select
+                id="cp-subcat"
+                className={inputClase}
+                value={f.subcategoria}
+                onChange={(e) => setF({ ...f, subcategoria: e.target.value })}
+              >
+                <option value="">— General —</option>
+                {catActual.subcategorias.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </Campo>
+          )}
+        </>
+      )}
+
       <div className="flex justify-end gap-2">
         <Boton variante="fantasma" onClick={onClose}>Cancelar</Boton>
         <Boton variante="oro" onClick={guardar}>Guardar</Boton>

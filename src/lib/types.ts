@@ -128,6 +128,10 @@ export interface Expense extends Base {
   amountBase: number | null; // convertido a base (ARS)
   baseCurrency: Currency;
   notes?: string;
+  /** id de categoría del catálogo (ej. "transporte", "alojamiento") */
+  categoria?: string;
+  /** subcategoría dentro de la categoría (ej. "Pasaje aéreo") */
+  subcategoria?: string;
 }
 
 export interface ExchangeRate {
