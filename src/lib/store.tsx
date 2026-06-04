@@ -24,6 +24,8 @@ import type {
   Reminder,
   Note,
   BudgetAlloc,
+  Persona,
+  PersonaItem,
 } from "./types";
 import { zonaDispositivo } from "./dates";
 
@@ -49,17 +51,19 @@ function emptyData(): AppData {
       endsOn: "2026-08-31",
       baseCurrency: "ARS",
     },
-    destinations: [],
-    actions:      [],
-    history:      [],
-    categories:   [],
-    expenses:     [],
-    rates:        [],
-    habits:       [],
-    habitLogs:    [],
-    reminders:    [],
-    notes:        [],
-    budgets:      [],
+    destinations:  [],
+    actions:       [],
+    history:       [],
+    categories:    [],
+    expenses:      [],
+    rates:         [],
+    habits:        [],
+    habitLogs:     [],
+    reminders:     [],
+    notes:         [],
+    budgets:       [],
+    personas:      [],
+    personaItems:  [],
   };
 }
 
@@ -106,6 +110,12 @@ interface StoreCtx {
   deleteBudget: (id: string) => void;
   // Configuración (reloj dual, etc.)
   updateSettings: (patch: Partial<AppData["settings"]>) => void;
+  // Personas y sus ítems
+  addPersona: (nombre: string, tipo: Persona["tipo"]) => void;
+  removePersona: (id: string) => void;
+  addPersonaItem: (personaId: string, texto: string, tipo: PersonaItem["tipo"]) => void;
+  togglePersonaItem: (id: string) => void;
+  removePersonaItem: (id: string) => void;
   // Mantenimiento
   resetAll: () => void;
 }
@@ -480,6 +490,37 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setData((d) => ({ ...d, settings: { ...d.settings, ...patch } }));
   }, []);
 
+  const addPersona: StoreCtx["addPersona"] = useCallback((nombre, tipo) => {
+    const p: Persona = { id: genId("per"), nombre: nombre.trim(), tipo, createdAt: nowIso() };
+    setData((d) => ({ ...d, personas: [...d.personas, p] }));
+  }, []);
+
+  const removePersona: StoreCtx["removePersona"] = useCallback((id) => {
+    setData((d) => ({
+      ...d,
+      personas: d.personas.filter((p) => p.id !== id),
+      personaItems: d.personaItems.filter((i) => i.personaId !== id),
+    }));
+  }, []);
+
+  const addPersonaItem: StoreCtx["addPersonaItem"] = useCallback((personaId, texto, tipo) => {
+    const item: PersonaItem = {
+      id: genId("pit"), personaId, texto: texto.trim(), tipo, hecho: false, createdAt: nowIso(),
+    };
+    setData((d) => ({ ...d, personaItems: [...d.personaItems, item] }));
+  }, []);
+
+  const togglePersonaItem: StoreCtx["togglePersonaItem"] = useCallback((id) => {
+    setData((d) => ({
+      ...d,
+      personaItems: d.personaItems.map((i) => i.id === id ? { ...i, hecho: !i.hecho } : i),
+    }));
+  }, []);
+
+  const removePersonaItem: StoreCtx["removePersonaItem"] = useCallback((id) => {
+    setData((d) => ({ ...d, personaItems: d.personaItems.filter((i) => i.id !== id) }));
+  }, []);
+
   const resetAll: StoreCtx["resetAll"] = useCallback(() => {
     setData(emptyData());
   }, []);
@@ -508,6 +549,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       updateBudget,
       deleteBudget,
       updateSettings,
+      addPersona, removePersona, addPersonaItem, togglePersonaItem, removePersonaItem,
       resetAll,
     }),
     [
@@ -515,7 +557,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setStatus, addExpense, updateExpense, softDeleteExpense, upsertCategory,
       upsertRate, toggleHabit, addHabit, softDeleteHabit, upsertDestination,
       markReminderSeen, upsertNote, addBudget, updateBudget, deleteBudget,
-      updateSettings, resetAll,
+      updateSettings, addPersona, removePersona, addPersonaItem, togglePersonaItem,
+      removePersonaItem, resetAll,
     ],
   );
 

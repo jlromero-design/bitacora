@@ -207,6 +207,24 @@ export interface BudgetAlloc {
   categoryId: string | null;
 }
 
+/** Persona o mascota en el registro de casa */
+export interface Persona {
+  id: string;
+  nombre: string;
+  tipo: "persona" | "pata";
+  createdAt: string;
+}
+
+/** Ítem asociado a una persona: regalo o tarea */
+export interface PersonaItem {
+  id: string;
+  personaId: string;
+  texto: string;
+  tipo: "regalo" | "tarea";
+  hecho: boolean;
+  createdAt: string;
+}
+
 /** Estado completo persistido en local */
 export interface AppData {
   settings: Settings;
@@ -224,6 +242,10 @@ export interface AppData {
   notes: Note[];
   /** asignaciones de presupuesto por período */
   budgets: BudgetAlloc[];
+  /** personas y mascotas del registro de casa */
+  personas: Persona[];
+  /** ítems (regalos/tareas) por persona */
+  personaItems: PersonaItem[];
 }
 
 /* Metadatos visuales por grupo */

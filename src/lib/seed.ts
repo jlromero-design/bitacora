@@ -211,6 +211,8 @@ export function seedData(): AppData {
       { id: "bud-w1", scope: "week", periodKey: "2026-W24", name: "Semana en Londres", amount: 300000, currency: "ARS", categoryId: null },
       { id: "bud-d1", scope: "day", periodKey: "2026-06-13", name: "Día de museos", amount: 45000, currency: "ARS", categoryId: "cat-comida" },
     ],
+    personas:     [],
+    personaItems: [],
   };
 }
 
