@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bitácora Vale — Plan de Proyecto</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #222536;
+    --border: #2e3347;
+    --gold: #c9a84c;
+    --gold-dim: #8a6e2e;
+    --text: #e8e2d4;
+    --text-dim: #7a8299;
+    --text-muted: #4a5168;
+    --green: #4caf7d;
+    --yellow: #e6a817;
+    --red: #e05252;
+    --blue: #5b8dee;
+    --purple: #9b7de8;
+    --radius: 10px;
+    font-size: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .header p { color: var(--text-dim); margin-top: .3rem; }
+  .meta { display: flex; gap: 1.5rem; margin-top: .8rem; flex-wrap: wrap; }
+  .meta span {
+    font-size: .75rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    color: var(--text-dim);
+  }
+  .meta span b { color: var(--text); }
+
+  /* Stats bar */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: .75rem;
+    margin-bottom: 2rem;
+  }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    text-align: center;
+  }
+  .stat .num { font-size: 2rem; font-weight: 700; line-height: 1; }
+  .stat .lbl { font-size: .7rem; color: var(--text-dim); margin-top: .3rem; text-transform: uppercase; letter-spacing: .08em; }
+
+  /* Section */
+  section { margin-bottom: 2.5rem; }
+  section h2 {
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .15em;
+    color: var(--gold-dim);
+    margin-bottom: 1rem;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Cards grid */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .75rem; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .card-title {
+    font-weight: 600;
+    font-size: .85rem;
+    margin-bottom: .4rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .card p { font-size: .8rem; color: var(--text-dim); }
+
+  /* Status badges */
+  .badge {
+    display: inline-block;
+    font-size: .65rem;
+    font-weight: 700;
+    padding: .15rem .5rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .badge-green  { background: color-mix(in srgb, var(--green) 15%, transparent); color: var(--green); }
+  .badge-yellow { background: color-mix(in srgb, var(--yellow) 15%, transparent); color: var(--yellow); }
+  .badge-red    { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+  .badge-blue   { background: color-mix(in srgb, var(--blue) 15%, transparent); color: var(--blue); }
+  .badge-purple { background: color-mix(in srgb, var(--purple) 15%, transparent); color: var(--purple); }
+
+  /* Checklist */
+  .checklist { display: flex; flex-direction: column; gap: .5rem; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .75rem 1rem;
+    cursor: pointer;
+    transition: border-color .15s;
+  }
+  .check-item:hover { border-color: var(--gold-dim); }
+  .check-item input[type="checkbox"] {
+    width: 16px; height: 16px;
+    accent-color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+  }
+  .check-item label { cursor: pointer; flex: 1; }
+  .check-item label .item-title { font-size: .85rem; font-weight: 500; }
+  .check-item label .item-desc { font-size: .75rem; color: var(--text-dim); margin-top: .15rem; }
+  .check-item input:checked ~ label .item-title { text-decoration: line-through; color: var(--text-muted); }
+
+  .priority-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+  .p-alta   { background: var(--red); }
+  .p-media  { background: var(--yellow); }
+  .p-baja   { background: var(--blue); }
+
+  /* Phase headers */
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: .75rem;
+    margin-top: 1.5rem;
+  }
+  .phase-header:first-child { margin-top: 0; }
+  .phase-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+    color: var(--bg);
+    font-weight: 700;
+    font-size: .75rem;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .phase-title { font-weight: 600; font-size: .95rem; }
+  .phase-sub { font-size: .75rem; color: var(--text-dim); margin-left: auto; }
+
+  /* Test results */
+  .test-bar {
+    background: var(--surface2);
+    border-radius: 20px;
+    height: 10px;
+    overflow: hidden;
+    margin: .5rem 0;
+  }
+  .test-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), #2ecc71);
+    border-radius: 20px;
+    transition: width .5s;
+  }
+
+  /* Risk list */
+  .risk-item {
+    background: var(--surface);
+    border-left: 3px solid var(--yellow);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: .6rem 1rem;
+    font-size: .8rem;
+    margin-bottom: .4rem;
+    color: var(--text-dim);
+  }
+
+  /* Gap table */
+  .gap-list { display: flex; flex-direction: column; gap: .4rem; }
+  .gap-row {
+    display: grid;
+    grid-template-columns: 24px 100px 1fr;
+    align-items: start;
+    gap: .75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem .75rem;
+    font-size: .8rem;
+  }
+  .gap-row .sec { color: var(--text-dim); font-size: .75rem; }
+  .gap-row .desc { color: var(--text); }
+
+  /* Inconsistency */
+  .inc-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--purple);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: .75rem 1rem;
+    margin-bottom: .5rem;
+  }
+  .inc-item .inc-desc { font-size: .82rem; }
+  .inc-item .inc-file { font-size: .7rem; color: var(--text-muted); margin-top: .3rem; font-family: monospace; }
+
+  /* Footer */
+  .footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: .75rem;
+    color: var(--text-muted);
+  }
+
+  /* Progress summary */
+  .progress-summary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .progress-label { font-size: .75rem; color: var(--text-dim); }
+  .progress-label b { color: var(--text); display: block; font-size: 1.1rem; }
+
+  @media (max-width: 600px) {
+    .gap-row { grid-template-columns: 24px 1fr; }
+    .gap-row .sec { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>✦ Bitácora Vale — Plan de Proyecto</h1>
+    <p>Documento vivo de seguimiento · Generado con audit de producto + QA automatizado</p>
+    <div class="meta">
+      <span>Proyecto: <b>bitácora-vale</b></span>
+      <span>Producción: <b>valeriajuri.com.ar</b></span>
+      <span>Stack: <b>Next.js 16 · Supabase · WebAuthn</b></span>
+      <span>Fecha: <b id="fecha-gen"></b></span>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="num" style="color:var(--green)">82</div>
+      <div class="lbl">Tests pasando</div>
+    </div>
+    <div class="stat">
+      <div class="num" style="color:var(--gold)">7</div>
+      <div class="lbl">Secciones activas</div>
+    </div>
+    <div class="stat">
+      <div class="num" style="color:var(--yellow)">2</div>
+      <div class="lbl">Secciones parciales</div>
+    </div>
+    <div class="stat">
+      <div class="num" style="color:var(--red)">10</div>
+      <div class="lbl">Gaps detectados</div>
+    </div>
+    <div class="stat">
+      <div class="num" style="color:var(--purple)">6</div>
+      <div class="lbl">Inconsistencias</div>
+    </div>
+    <div class="stat">
+      <div class="num" style="color:var(--blue)">4</div>
+      <div class="lbl">Entidades sin UI</div>
+    </div>
+  </div>
+
+  <!-- ESTADO DE SECCIONES -->
+  <section>
+    <h2>Estado de secciones</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="card-title"><span class="badge badge-green">Completa</span> Agenda</div>
+        <p>Timeline diario, CRUD de actividades, vista vuelos, nota diaria editable 24h, frase del día.</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="badge badge-green">Completa</span> Destinos</div>
+        <p>Barra proporcional, tarjetas, selects en cascada, suspender / reactivar / eliminar.</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="badge badge-yellow">Parcial</span> Finanzas</div>
+        <p>Presupuesto por período y cotizaciones OK. Falta: editar/borrar gastos, resumen total del viaje, gestión de BudgetCategory.</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="badge badge-green">Completa</span> Hábitos</div>
+        <p>Vista semana/mes, toggle, rachas, crear/eliminar. Falta: editar hábito existente.</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="badge badge-green">Completa</span> Pendientes</div>
+        <p>Lista por semana, CRUD completo, badges de prioridad y estado.</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="badge badge-green">Completa</span> En Casa</div>
+        <p>Personas/mascotas con ítems, trámites y pagos remotos con responsable y recurrencia.</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="badge badge-green">Completa</span> Notas</div>
+        <p>Timeline cronológico inverso. Escritura desde Agenda. Solo lectura aquí.</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="badge badge-green">Completa</span> Tiempo</div>
+        <p>Reloj dual, refresh 10s, selector de zona por país/destino, etiquetas configurables.</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="badge badge-yellow">Parcial</span> Papelera</div>
+        <p>Restaura TripActions. Falta: gastos y hábitos eliminados, "vaciar papelera".</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAN DE TRABAJO -->
+  <section>
+    <h2>Plan de trabajo — Checklist</h2>
+
+    <div class="phase-header">
+      <div class="phase-num">1</div>
+      <div class="phase-title">Estabilización — Bugs y consistencia</div>
+      <div class="phase-sub">Prioridad alta</div>
+    </div>
+    <div class="checklist">
+      <div class="check-item">
+        <input type="checkbox" id="t1">
+        <div class="priority-dot p-alta"></div>
+        <label for="t1">
+          <div class="item-title">Finanzas: editar y eliminar gastos individuales</div>
+          <div class="item-desc">La lista del período no tiene botón de editar ni borrar. softDeleteExpense existe en el store pero no está en la UI.</div>
+        </label>
+        <span class="badge badge-red">Alta</span>
+      </div>
+      <div class="check-item">
+        <input type="checkbox" id="t2">
+        <div class="priority-dot p-alta"></div>
+        <label for="t2">
+          <div class="item-title">Finanzas: gestión de BudgetCategory</div>
+          <div class="item-desc">upsertCategory existe pero ninguna pantalla la llama. El select de categorías en CargaPopup siempre aparece vacío.</div>
+        </label>
+        <span class="badge badge-red">Alta</span>
+      </div>
+      <div class="check-item">
+        <input type="checkbox" id="t3">
+        <div class="priority-dot p-alta"></div>
+        <label for="t3">
+          <div class="item-title">ActionEditor: labels en español (estados y prioridades)</div>
+          <div class="item-desc">Los selects muestran "planned, confirmed, in_progress…" en lugar de usar ESTADO_LABEL y PRIORIDAD_LABEL ya definidos en types.ts.</div>
+        </label>
+        <span class="badge badge-red">Alta</span>
+      </div>
+      <div class="check-item">
+        <input type="checkbox" id="t4">
+        <div class="priority-dot p-alta"></div>
+        <label for="t4">
+          <div class="item-title">Papelera: agregar gastos y hábitos eliminados</div>
+          <div class="item-desc">softDeleteExpense y softDeleteHabit existen pero los ítems borrados no aparecen en Papelera ni se pueden restaurar.</div>
+        </label>
+        <span class="badge badge-red">Alta</span>
+      </div>
+      <div class="check-item">
+        <input type="checkbox" id="t5">
+        <div class="priority-dot p-alta"></div>
+        <label for="t5">
+          <div class="item-title">WebAuthn: actualizar vars de entorno en Vercel</div>
+          <div class="item-desc">WEBAUTHN_RP_ID y WEBAUTHN_ORIGIN deben apuntar a valeriajuri.com.ar. Hoy apuntan a localhost.</div>
+        </label>
+        <span class="badge badge-red">Alta</span>
+      </div>
+    </div>
+
+    <div class="phase-header">
+      <div class="phase-num">2</div>
+      <div class="phase-title">Funcionalidades incompletas</div>
+      <div class="phase-sub">Prioridad media</div>
+    </div>
+    <div class="checklist">
+      <div class="check-item">
+        <input type="checkbox" id="t6">
+        <div class="priority-dot p-media"></div>
+        <label for="t6">
+          <div class="item-title">Finanzas: resumen total del viaje</div>
+          <div class="item-desc">Gasto acumulado global, distribución por categoría, vs. presupuesto total. Los selectores ya existen en selectors.ts.</div>
+        </label>
+        <span class="badge badge-yellow">Media</span>
+      </div>
+      <div class="check-item">
+        <input type="checkbox" id="t7">
+        <div class="priority-dot p-media"></div>
+        <label for="t7">
+          <div class="item-title">Hábitos: editar hábito existente</div>
+          <div class="item-desc">Solo se puede crear o eliminar. Falta poder cambiar nombre, ícono y meta semanal de un hábito ya creado.</div>
+        </label>
+        <span class="badge badge-yellow">Media</span>
+      </div>
+      <div class="check-item">
+        <input type="checkbox" id="t8">
+        <div class="priority-dot p-media"></div>
+        <label for="t8">
+          <div class="item-title">Perfil: form para zodíaco y cumpleaños</div>
+          <div class="item-desc">Settings.zodiac y Settings.birthday se usan en frases del día pero no son editables desde ninguna pantalla.</div>
+        </label>
+        <span class="badge badge-yellow">Media</span>
+      </div>
+      <div class="check-item">
+        <input type="checkbox" id="t9">
+        <div class="priority-dot p-media"></div>
+        <label for="t9">
+          <div class="item-title">Trip: editar datos del viaje (título, fechas, moneda base)</div>
+          <div class="item-desc">El objeto Trip no es editable desde ninguna pantalla. No hay onboarding ni configuración inicial.</div>
+        </label>
+        <span class="badge badge-yellow">Media</span>
+      </div>
+      <div class="check-item">
+        <input type="checkbox" id="t10">
+        <div class="priority-dot p-media"></div>
+        <label for="t10">
+          <div class="item-title">Sincronización localStorage ↔ Supabase</div>
+          <div class="item-desc">Toda la app persiste en localStorage. La capa Supabase (repo.ts) existe pero no está conectada al store principal.</div>
+        </label>
+        <span class="badge badge-yellow">Media</span>
+      </div>
+    </div>
+
+    <div class="phase-header">
+      <div class="phase-num">3</div>
+      <div class="phase-title">Mejoras y detalles</div>
+      <div class="phase-sub">Prioridad baja</div>
+    </div>
+    <div class="checklist">
+      <div class="check-item">
+        <input type="checkbox" id="t11">
+        <div class="priority-dot p-baja"></div>
+        <label for="t11">
+          <div class="item-title">Destinos: campo notes visible en formulario y tarjeta</div>
+          <div class="item-desc">El campo notes existe en el tipo pero no aparece en DestinoEditor ni se muestra en las tarjetas.</div>
+        </label>
+        <span class="badge badge-blue">Baja</span>
+      </div>
+      <div class="check-item">
+        <input type="checkbox" id="t12">
+        <div class="priority-dot p-baja"></div>
+        <label for="t12">
+          <div class="item-title">Papelera: "Vaciar papelera" (eliminación permanente)</div>
+          <div class="item-desc">No hay opción de borrar permanentemente ni de ver ActionHistory.</div>
+        </label>
+        <span class="badge badge-blue">Baja</span>
+      </div>
+      <div class="check-item">
+        <input type="checkbox" id="t13">
+        <div class="priority-dot p-baja"></div>
+        <label for="t13">
+          <div class="item-title">Reminders: UI para crear y listar recordatorios</div>
+          <div class="item-desc">El array reminders existe en el store con markReminderSeen pero no hay pantalla para crearlos o editarlos.</div>
+        </label>
+        <span class="badge badge-blue">Baja</span>
+      </div>
+      <div class="check-item">
+        <input type="checkbox" id="t14">
+        <div class="priority-dot p-baja"></div>
+        <label for="t14">
+          <div class="item-title">Portfolio Vale: deploy en Vercel</div>
+          <div class="item-desc">El proyecto portfolio-vale está en GitHub pero sin deploy. Decidir URL: portfolio.valeriajuri.com.ar u otro.</div>
+        </label>
+        <span class="badge badge-blue">Baja</span>
+      </div>
+      <div class="check-item">
+        <input type="checkbox" id="t15">
+        <div class="priority-dot p-baja"></div>
+        <label for="t15">
+          <div class="item-title">Limpiar grupos "habit" y "destination" no usados</div>
+          <div class="item-desc">ActionGroup incluye 'habit' y 'destination' en types.ts pero ningún flujo los usa. Generan confusión.</div>
+        </label>
+        <span class="badge badge-blue">Baja</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- INCONSISTENCIAS DETECTADAS -->
+  <section>
+    <h2>Inconsistencias detectadas (product audit)</h2>
+    <div class="inc-item">
+      <div class="inc-desc">El select de estados y prioridades en ActionEditor usa las keys en inglés (<code>planned, confirmed…</code>) en lugar de <code>ESTADO_LABEL</code> y <code>PRIORIDAD_LABEL</code> ya definidos.</div>
+      <div class="inc-file">src/components/actions/action-editor.tsx</div>
+    </div>
+    <div class="inc-item">
+      <div class="inc-desc">El select de "Categoría presupuestaria" en CargaPopup usa <code>data.categories</code> (BudgetCategory, siempre vacío) en lugar del catálogo <code>CATALOGO</code> de categorias.ts. Genera confusión entre dos sistemas de categorías.</div>
+      <div class="inc-file">src/app/(app)/finanzas/page.tsx</div>
+    </div>
+    <div class="inc-item">
+      <div class="inc-desc">La Papelera solo restaura TripActions. softDeleteHabit y softDeleteExpense no tienen recuperación — asimetría en el modelo de datos.</div>
+      <div class="inc-file">src/app/(app)/papelera/page.tsx</div>
+    </div>
+    <div class="inc-item">
+      <div class="inc-desc">En DestinoEditor, el nombre del destino se fija automáticamente al elegir ciudad pero no hay campo manual para corregirlo si el nombre no es el deseado.</div>
+      <div class="inc-file">src/app/(app)/destinos/page.tsx</div>
+    </div>
+    <div class="inc-item">
+      <div class="inc-desc">ActionGroup incluye <code>'destination'</code> en types.ts y GRUPO_META pero nunca se usa en ningún flujo.</div>
+      <div class="inc-file">src/lib/types.ts</div>
+    </div>
+    <div class="inc-item">
+      <div class="inc-desc">KINDS_AGENDA incluye <code>'habit'</code> como kind de agenda pero no es accesible desde ningún selector ni editor.</div>
+      <div class="inc-file">src/components/actions/action-editor.tsx</div>
+    </div>
+  </section>
+
+  <!-- QA / TESTS -->
+  <section>
+    <h2>Cobertura de tests</h2>
+    <div class="card" style="margin-bottom:.75rem">
+      <div class="card-title" style="font-size:1rem">Suite total: <span style="color:var(--green)">82 / 82 passing ✓</span></div>
+      <div class="test-bar"><div class="test-fill" style="width:100%"></div></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:.75rem">
+        <div style="text-align:center">
+          <div style="font-weight:700;color:var(--green)">13</div>
+          <div style="font-size:.7rem;color:var(--text-dim)">places.test.ts</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-weight:700;color:var(--green)">27</div>
+          <div style="font-size:.7rem;color:var(--text-dim)">categorias.test.ts</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-weight:700;color:var(--green)">42</div>
+          <div style="font-size:.7rem;color:var(--text-dim)">dates.test.ts</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:.5rem;font-size:.8rem;color:var(--text-dim);font-weight:600">Módulos sin cobertura</div>
+    <div class="grid" style="margin-bottom:1rem">
+      <div class="card"><div class="card-title"><span class="badge badge-red">Sin tests</span> store.tsx</div><p>Lógica central — CRUD de todas las entidades, soft-delete, cálculos derivados.</p></div>
+      <div class="card"><div class="card-title"><span class="badge badge-red">Sin tests</span> selectors.ts</div><p>Filtros y cálculos derivados del store (gastoTotal, presupuestoTotal, accionesVivas…)</p></div>
+      <div class="card"><div class="card-title"><span class="badge badge-red">Sin tests</span> webauthn-acciones.ts</div><p>Server actions críticos de autenticación biométrica.</p></div>
+    </div>
+
+    <div style="margin-bottom:.5rem;font-size:.8rem;color:var(--text-dim);font-weight:600">Riesgos de regresión</div>
+    <div class="risk-item">categorias.ts es datos estáticos — cambiar un id, nombre o subcategoría rompe los tests que los verifican por valor exacto.</div>
+    <div class="risk-item">fmtLargo/fmtCorto/fmtDiaSemana dependen del locale 'es' de date-fns — actualizar la versión puede cambiar el output de texto.</div>
+    <div class="risk-item">semanaKey es sensible al día exacto — tests con fechas hardcodeadas cerca del cambio de año ISO pueden romperse si cambia la lógica de startOfWeek.</div>
+    <div class="risk-item">horaEnZona con zona inválida retorna '--:--' via catch — si Intl.DateTimeFormat cambia su comportamiento en el entorno de test podría fallar.</div>
+  </section>
+
+  <!-- ENTIDADES SIN UI -->
+  <section>
+    <h2>Entidades del store sin pantalla</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="card-title"><span class="badge badge-red">Sin UI</span> BudgetCategory</div>
+        <p>upsertCategory existe pero nunca se llama. El select de categorías en Finanzas siempre aparece vacío.</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="badge badge-yellow">Sin UI</span> ActionHistory</div>
+        <p>El store registra cada operación sobre acciones pero no hay log ni pantalla de auditoría.</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="badge badge-yellow">Sin UI</span> Reminder</div>
+        <p>markReminderSeen existe y la campanita los lee, pero no hay form para crearlos manualmente.</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="badge badge-yellow">Sin UI</span> Trip</div>
+        <p>Título, fechas y moneda base del viaje no son editables desde ninguna pantalla.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRESO DINÁMICO -->
+  <section>
+    <h2>Progreso del plan</h2>
+    <div class="progress-summary">
+      <div class="progress-label"><b id="done-count">0</b> completadas</div>
+      <div class="progress-label"><b id="total-count">15</b> total</div>
+      <div style="flex:1;min-width:120px">
+        <div class="test-bar" style="background:var(--surface2)">
+          <div class="test-fill" id="progress-fill" style="width:0%;background:linear-gradient(90deg,var(--gold-dim),var(--gold))"></div>
+        </div>
+      </div>
+      <div class="progress-label"><b id="pct-count">0%</b></div>
+    </div>
+  </section>
+
+  <div class="footer">
+    Generado automáticamente con Claude Code · product-auditor + qa-testing agents<br>
+    Proyecto: bitácora-vale · valeriajuri.com.ar
+  </div>
+
+</div>
+
+<script>
+  // Fecha de generación
+  document.getElementById('fecha-gen').textContent = new Date().toLocaleDateString('es-AR', { day:'2-digit', month:'long', year:'numeric' });
+
+  // Progress tracker
+  const checks = document.querySelectorAll('.check-item input[type="checkbox"]');
+  const doneEl = document.getElementById('done-count');
+  const pctEl = document.getElementById('pct-count');
+  const fillEl = document.getElementById('progress-fill');
+
+  function updateProgress() {
+    const done = [...checks].filter(c => c.checked).length;
+    const pct = Math.round((done / checks.length) * 100);
+    doneEl.textContent = done;
+    pctEl.textContent = pct + '%';
+    fillEl.style.width = pct + '%';
+    // Guardar estado
+    const state = [...checks].map(c => c.checked);
+    localStorage.setItem('bitacora-plan-state', JSON.stringify(state));
+  }
+
+  // Restaurar estado guardado
+  const saved = JSON.parse(localStorage.getItem('bitacora-plan-state') || '[]');
+  checks.forEach((c, i) => { if (saved[i]) c.checked = true; });
+  updateProgress();
+
+  checks.forEach(c => c.addEventListener('change', updateProgress));
+</script>
+</body>
+</html>
