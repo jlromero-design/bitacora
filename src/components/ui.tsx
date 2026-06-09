@@ -44,12 +44,14 @@ export function Boton({
   className = "",
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variante?: "primario" | "oro" | "fantasma";
+  variante?: "primario" | "oro" | "fantasma" | "peligro" | "peligro-fantasma";
 }) {
   const estilos = {
     primario: "btn-acero",
     oro: "btn-oro font-semibold",
     fantasma: "btn-ghost-metal",
+    peligro: "bg-[var(--peligro,#e05252)] text-white hover:opacity-90",
+    "peligro-fantasma": "border border-[var(--peligro,#e05252)] text-[var(--peligro,#e05252)] hover:bg-[color-mix(in_srgb,var(--peligro,#e05252)_12%,transparent)]",
   }[variante];
   return (
     <button

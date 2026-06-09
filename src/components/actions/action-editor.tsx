@@ -36,11 +36,12 @@ export function ActionEditor({
   destinoInicial?: string;
   kindInicial?: string;
 }) {
-  const { addAction, updateAction, data } = useStore();
+  const { addAction, updateAction, softDeleteAction, data } = useStore();
+  const [confirmarEliminar, setConfirmarEliminar] = useState(false);
   const [form, setForm] = useState(() => inicial(fecha, grupoInicial, editar, destinoInicial, kindInicial));
 
   useEffect(() => {
-    if (open) setForm(inicial(fecha, grupoInicial, editar, destinoInicial, kindInicial));
+    if (open) { setForm(inicial(fecha, grupoInicial, editar, destinoInicial, kindInicial)); setConfirmarEliminar(false); }
   }, [open, fecha, grupoInicial, editar, destinoInicial, kindInicial]);
 
   const esVuelo = form.group === "agenda" && form.kind === "vuelo";
@@ -146,7 +147,7 @@ export function ActionEditor({
           className={inputClase}
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
-          placeholder="¿Qué vas a hacer?"
+          placeholder={esVuelo ? "Ej: Vuelo BUE → LHR" : "¿Qué vas a hacer?"}
         />
       </Campo>
 
@@ -164,26 +165,28 @@ export function ActionEditor({
         </select>
       </Campo>
 
-      <Campo label="Descripción" htmlFor="ed-desc">
-        <textarea
-          id="ed-desc"
-          className={`${inputClase} min-h-[72px] resize-y`}
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-          placeholder="Detalles, dirección, notas…"
-        />
-      </Campo>
+      {!esVuelo && (
+        <Campo label="Descripción" htmlFor="ed-desc">
+          <textarea
+            id="ed-desc"
+            className={`${inputClase} min-h-[72px] resize-y`}
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            placeholder="Detalles, dirección, notas…"
+          />
+        </Campo>
+      )}
 
       <div className="grid grid-cols-3 gap-3">
-        <Campo label="Fecha" htmlFor="ed-fecha">
+        <Campo label={esVuelo ? "Fecha de salida" : "Fecha"} htmlFor="ed-fecha">
           <input id="ed-fecha" type="date" className={inputClase} value={form.actionDate}
             onChange={(e) => setForm({ ...form, actionDate: e.target.value })} />
         </Campo>
-        <Campo label="Desde" htmlFor="ed-desde">
+        <Campo label={esVuelo ? "Despegue" : "Desde"} htmlFor="ed-desde">
           <input id="ed-desde" type="time" className={inputClase} value={form.startsAt}
             onChange={(e) => setForm({ ...form, startsAt: e.target.value })} />
         </Campo>
-        <Campo label="Hasta" htmlFor="ed-hasta">
+        <Campo label={esVuelo ? "Aterrizaje" : "Hasta"} htmlFor="ed-hasta">
           <input id="ed-hasta" type="time" className={inputClase} value={form.endsAt}
             onChange={(e) => setForm({ ...form, endsAt: e.target.value })} />
         </Campo>
@@ -205,7 +208,7 @@ export function ActionEditor({
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Campo label="Monto (opcional)" htmlFor="ed-monto">
+        <Campo label={esVuelo ? "Precio del vuelo" : "Monto (opcional)"} htmlFor="ed-monto">
           <input id="ed-monto" type="number" inputMode="decimal" className={inputClase} value={form.amount}
             onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="0" />
         </Campo>
@@ -217,9 +220,29 @@ export function ActionEditor({
         </Campo>
       </div>
 
-      <div className="mt-2 flex justify-end gap-2">
-        <Boton variante="fantasma" onClick={onClose}>Cancelar</Boton>
-        <Boton variante="oro" onClick={guardar}>{editar ? "Guardar" : "Crear"}</Boton>
+      {/* Confirmar eliminación */}
+      {confirmarEliminar && editar && (
+        <div className="rounded-xl border border-[var(--peligro,#e05252)] bg-[color-mix(in_srgb,var(--peligro,#e05252)_10%,transparent)] p-3">
+          <p className="mb-3 text-sm text-marfil">¿Eliminar esta actividad? Esta acción no se puede deshacer.</p>
+          <div className="flex gap-2">
+            <Boton variante="fantasma" onClick={() => setConfirmarEliminar(false)}>Cancelar</Boton>
+            <Boton variante="peligro" onClick={() => { softDeleteAction(editar.id); onClose(); }}>
+              Sí, eliminar
+            </Boton>
+          </div>
+        </div>
+      )}
+
+      <div className="mt-2 flex items-center gap-2">
+        {editar && !confirmarEliminar && (
+          <Boton variante="peligro-fantasma" onClick={() => setConfirmarEliminar(true)}>
+            Eliminar
+          </Boton>
+        )}
+        <div className="ml-auto flex gap-2">
+          <Boton variante="fantasma" onClick={onClose}>Cancelar</Boton>
+          <Boton variante="oro" onClick={guardar}>{editar ? "Guardar" : "Crear"}</Boton>
+        </div>
       </div>
     </Sheet>
   );
