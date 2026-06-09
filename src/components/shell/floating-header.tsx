@@ -1,17 +1,25 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Brujula, Menu } from "@/components/icons";
 import { MENU_PRINCIPAL } from "./nav-items";
 import { DualClock } from "./dual-clock";
 import { AlertsBell } from "./alerts-bell";
 import { useUI } from "@/lib/ui";
+import { createClient } from "@/lib/supabase/client";
 
 export function FloatingHeader() {
   const [compact, setCompact] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const { setMenuOpen } = useUI();
+
+  async function cerrarSesion() {
+    try { await createClient().auth.signOut(); } catch { /* sin sesión */ }
+    router.push("/auth/login");
+    router.refresh();
+  }
 
   useEffect(() => {
     const onScroll = () => setCompact(window.scrollY > 28);
@@ -89,11 +97,26 @@ export function FloatingHeader() {
           <AlertsBell />
         </div>
 
-        {/* Hamburguesa */}
+        {/* Logout — solo escritorio */}
+        <button
+          type="button"
+          onClick={cerrarSesion}
+          className="hidden md:grid h-9 w-9 place-items-center rounded-xl text-gris-azul hover:bg-[var(--tinta-3)] hover:text-marfil"
+          aria-label="Cerrar sesión"
+          title="Cerrar sesión"
+        >
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </button>
+
+        {/* Hamburguesa — solo mobile */}
         <button
           type="button"
           onClick={() => setMenuOpen(true)}
-          className="grid h-10 w-10 place-items-center rounded-xl text-gris-azul hover:bg-[var(--tinta-3)] hover:text-marfil"
+          className="md:hidden grid h-10 w-10 place-items-center rounded-xl text-gris-azul hover:bg-[var(--tinta-3)] hover:text-marfil"
           aria-label="Abrir menú"
         >
           <Menu />

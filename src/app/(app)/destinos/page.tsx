@@ -5,7 +5,7 @@ import { accionesVivas, colorDestino } from "@/lib/selectors";
 import { fmtCorto, diasEntre } from "@/lib/dates";
 import type { Destination, Currency, TipoDestino } from "@/lib/types";
 import { TIPO_DESTINO } from "@/lib/types";
-import { PAISES, buscarPais } from "@/lib/places";
+import { PAISES, buscarPais, ciudadesDeProvincia } from "@/lib/places";
 import { PageHeader, Boton, Sheet, Campo, inputClase } from "@/components/ui";
 import { ActionEditor } from "@/components/actions/action-editor";
 import { Mas, Lapiz, Pin, Telefono, Whatsapp, ICONO_TIPO } from "@/components/icons";
@@ -183,6 +183,11 @@ export default function DestinosPage() {
   );
 }
 
+const TIPOS_ALOJAMIENTO = [
+  "Hotel", "Hostel", "Airbnb", "Cabaña", "Camping",
+  "Departamento", "Casa / Chalet", "Bed & Breakfast", "Resort",
+] as const;
+
 function DestinoEditor({
   open, onClose, editar, onGuardar,
 }: {
@@ -196,83 +201,97 @@ function DestinoEditor({
 
   const paisSel = buscarPais(f.country);
   const provincias = paisSel?.provincias ?? [];
+  const ciudades = ciudadesDeProvincia(paisSel, f.province);
 
   function elegirPais(nombre: string) {
     const p = buscarPais(nombre);
     setF((prev) => ({
       ...prev,
       country: nombre,
-      // auto-completar zona horaria y moneda
       currency: p?.currency ?? prev.currency,
       timezone: p?.timezone ?? prev.timezone,
-      // si la provincia actual no pertenece al país, resetear
-      province: p?.provincias.includes(prev.province) ? prev.province : "",
+      province: "",
+      city: "",
+      name: "",
     }));
   }
 
+  function elegirProvincia(provincia: string) {
+    setF((prev) => ({ ...prev, province: provincia, city: "", name: "" }));
+  }
+
+  function elegirCiudad(ciudad: string) {
+    setF((prev) => ({ ...prev, city: ciudad, name: ciudad }));
+  }
+
+  const puedeGuardar = f.country && f.province && f.city;
+
   return (
     <Sheet open={open} onClose={onClose} titulo={editar ? "Editar destino" : "Nuevo destino"}>
-      <div className="grid grid-cols-2 gap-2">
-        <Campo label="Nombre del destino" htmlFor="d-name">
-          <input id="d-name" className={inputClase} value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} placeholder="Ej: Londres" />
-        </Campo>
-        <Campo label="Ciudad" htmlFor="d-ciudad">
-          <input id="d-ciudad" className={inputClase} value={f.city} onChange={(e) => setF({ ...f, city: e.target.value })} />
-        </Campo>
-      </div>
+      {/* Cascada: país → provincia → ciudad */}
+      <Campo label="País" htmlFor="d-pais">
+        <select id="d-pais" className={inputClase} value={f.country} onChange={(e) => elegirPais(e.target.value)}>
+          <option value="">— Elegí un país —</option>
+          {PAISES.map((p) => <option key={p.nombre} value={p.nombre}>{p.nombre}</option>)}
+        </select>
+      </Campo>
 
-      {/* Selects en cascada: país → provincia (auto zona horaria + moneda) */}
       <div className="grid grid-cols-2 gap-2">
-        <Campo label="País" htmlFor="d-pais">
-          <select id="d-pais" className={inputClase} value={f.country} onChange={(e) => elegirPais(e.target.value)}>
-            <option value="">— Elegí un país —</option>
-            {PAISES.map((p) => <option key={p.nombre} value={p.nombre}>{p.nombre}</option>)}
-          </select>
-        </Campo>
         <Campo label="Provincia / Región" htmlFor="d-prov">
           <select id="d-prov" className={inputClase} value={f.province} disabled={!paisSel}
-            onChange={(e) => setF({ ...f, province: e.target.value })}>
+            onChange={(e) => elegirProvincia(e.target.value)}>
             <option value="">{paisSel ? "— Elegí —" : "Elegí país primero"}</option>
             {provincias.map((pr) => <option key={pr} value={pr}>{pr}</option>)}
           </select>
         </Campo>
+        <Campo label="Ciudad" htmlFor="d-ciudad">
+          <select id="d-ciudad" className={inputClase} value={f.city} disabled={!f.province}
+            onChange={(e) => elegirCiudad(e.target.value)}>
+            <option value="">{f.province ? "— Elegí —" : "Elegí provincia primero"}</option>
+            {ciudades.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </Campo>
       </div>
 
-      {/* Zona horaria y moneda: se completan solas, pero se pueden ajustar */}
+      {/* Info automática: moneda y timezone */}
       <div className="grid grid-cols-2 gap-2">
-        <Campo label="Moneda (automática)" htmlFor="d-mon">
+        <Campo label="Moneda" htmlFor="d-mon">
           <select id="d-mon" className={inputClase} value={f.currency} onChange={(e) => setF({ ...f, currency: e.target.value as Currency })}>
             {MONEDAS.map((m) => <option key={m} value={m}>{m}</option>)}
           </select>
         </Campo>
-        <Campo label="Zona horaria (automática)" htmlFor="d-tz">
-          <input id="d-tz" className={inputClase} value={f.timezone} onChange={(e) => setF({ ...f, timezone: e.target.value })} />
+        <Campo label="Zona horaria" htmlFor="d-tz">
+          <div id="d-tz" className={`${inputClase} flex items-center text-gris-azul`}>
+            {f.timezone || "—"}
+          </div>
         </Campo>
-      </div>
-
-      <div className="grid grid-cols-2 gap-2">
-        <Campo label="Desde" htmlFor="d-desde"><input id="d-desde" type="date" className={inputClase} value={f.startsOn} onChange={(e) => setF({ ...f, startsOn: e.target.value })} /></Campo>
-        <Campo label="Hasta" htmlFor="d-hasta"><input id="d-hasta" type="date" className={inputClase} value={f.endsOn} onChange={(e) => setF({ ...f, endsOn: e.target.value })} /></Campo>
       </div>
 
       <Campo label="Alojamiento" htmlFor="d-aloj">
-        <input id="d-aloj" className={inputClase} value={f.accommodation} onChange={(e) => setF({ ...f, accommodation: e.target.value })} placeholder="Ej: Airbnb en Camden" />
+        <select id="d-aloj" className={inputClase} value={f.accommodation}
+          onChange={(e) => setF({ ...f, accommodation: e.target.value })}>
+          <option value="">— Sin especificar —</option>
+          {TIPOS_ALOJAMIENTO.map((t) => <option key={t} value={t}>{t}</option>)}
+        </select>
       </Campo>
-      <Campo label="Referencia (dirección / link)" htmlFor="d-ref">
-        <input id="d-ref" className={inputClase} value={f.reference} onChange={(e) => setF({ ...f, reference: e.target.value })} placeholder="Dirección, link de la reserva…" />
-      </Campo>
+
       <div className="grid grid-cols-2 gap-2">
-        <Campo label="Contacto" htmlFor="d-contact">
-          <input id="d-contact" className={inputClase} value={f.contactName} onChange={(e) => setF({ ...f, contactName: e.target.value })} placeholder="¿Con quién te contactás?" />
+        <Campo label="Desde" htmlFor="d-desde">
+          <input id="d-desde" type="date" className={inputClase} value={f.startsOn}
+            onChange={(e) => setF({ ...f, startsOn: e.target.value })} />
         </Campo>
-        <Campo label="Nro de referencia / tel." htmlFor="d-phone">
-          <input id="d-phone" type="tel" className={inputClase} value={f.contactPhone} onChange={(e) => setF({ ...f, contactPhone: e.target.value })} placeholder="+44…" />
+        <Campo label="Hasta" htmlFor="d-hasta">
+          <input id="d-hasta" type="date" className={inputClase} value={f.endsOn}
+            onChange={(e) => setF({ ...f, endsOn: e.target.value })} />
         </Campo>
       </div>
 
       <div className="flex justify-end gap-2">
         <Boton variante="fantasma" onClick={onClose}>Cancelar</Boton>
-        <Boton variante="oro" onClick={() => { if (f.name.trim()) { onGuardar({ id: editar?.id, ...f }); onClose(); } }}>{editar ? "Guardar" : "Crear"}</Boton>
+        <Boton variante="oro" disabled={!puedeGuardar}
+          onClick={() => { if (puedeGuardar) { onGuardar({ id: editar?.id, ...f }); onClose(); } }}>
+          {editar ? "Guardar" : "Crear"}
+        </Boton>
       </div>
     </Sheet>
   );
@@ -280,10 +299,14 @@ function DestinoEditor({
 
 function init(d: Destination | null) {
   return {
-    name: d?.name ?? "", country: d?.country ?? "", city: d?.city ?? "", province: d?.province ?? "",
+    name: d?.name ?? "",
+    country: d?.country ?? "",
+    city: d?.city ?? "",
+    province: d?.province ?? "",
     currency: (d?.currency ?? "EUR") as Currency,
     timezone: d?.timezone ?? "Europe/London",
-    startsOn: d?.startsOn ?? "2026-06-05", endsOn: d?.endsOn ?? "2026-06-08",
+    startsOn: d?.startsOn ?? "2026-06-05",
+    endsOn: d?.endsOn ?? "2026-06-08",
     accommodation: d?.accommodation ?? "",
     reference: d?.reference ?? "",
     contactName: d?.contactName ?? "",
