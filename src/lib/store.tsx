@@ -90,6 +90,7 @@ interface StoreCtx {
   addExpense: (e: Partial<Expense> & Pick<Expense, "title" | "amount" | "currency" | "spentOn">) => void;
   updateExpense: (id: string, patch: Partial<Expense>) => void;
   softDeleteExpense: (id: string) => void;
+  restoreExpense: (id: string) => void;
   // Presupuesto
   upsertCategory: (c: Partial<BudgetCategory> & { id?: string }) => void;
   // Cotizaciones
@@ -98,6 +99,7 @@ interface StoreCtx {
   toggleHabit: (habitId: string, dayKey: string) => void;
   addHabit: (h: Partial<Habit> & Pick<Habit, "name">) => void;
   softDeleteHabit: (id: string) => void;
+  restoreHabit: (id: string) => void;
   // Destinos
   upsertDestination: (d: Partial<Destination> & { id?: string }) => void;
   softDeleteDestination: (id: string) => void;
@@ -290,6 +292,15 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
+  const restoreExpense: StoreCtx["restoreExpense"] = useCallback((id) => {
+    setData((d) => ({
+      ...d,
+      expenses: d.expenses.map((e) =>
+        e.id === id ? { ...e, deletedAt: null, updatedAt: nowIso() } : e,
+      ),
+    }));
+  }, []);
+
   const upsertCategory: StoreCtx["upsertCategory"] = useCallback((c) => {
     setData((d) => {
       if (c.id && d.categories.some((x) => x.id === c.id)) {
@@ -394,6 +405,15 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       ...d,
       habits: d.habits.map((h) =>
         h.id === id ? { ...h, deletedAt: nowIso() } : h,
+      ),
+    }));
+  }, []);
+
+  const restoreHabit: StoreCtx["restoreHabit"] = useCallback((id) => {
+    setData((d) => ({
+      ...d,
+      habits: d.habits.map((h) =>
+        h.id === id ? { ...h, deletedAt: null, updatedAt: nowIso() } : h,
       ),
     }));
   }, []);
@@ -567,11 +587,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       addExpense,
       updateExpense,
       softDeleteExpense,
+      restoreExpense,
       upsertCategory,
       upsertRate,
       toggleHabit,
       addHabit,
       softDeleteHabit,
+      restoreHabit,
       upsertDestination,
       softDeleteDestination,
       suspendDestination,
@@ -587,8 +609,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }),
     [
       data, ready, addAction, updateAction, softDeleteAction, restoreAction,
-      setStatus, addExpense, updateExpense, softDeleteExpense, upsertCategory,
-      upsertRate, toggleHabit, addHabit, softDeleteHabit, upsertDestination,
+      setStatus, addExpense, updateExpense, softDeleteExpense, restoreExpense,
+      upsertCategory, upsertRate, toggleHabit, addHabit, softDeleteHabit, restoreHabit,
+      upsertDestination,
       markReminderSeen, upsertNote, addBudget, updateBudget, deleteBudget,
       updateSettings, addPersona, removePersona, addPersonaItem, togglePersonaItem,
       removePersonaItem, resetAll,
