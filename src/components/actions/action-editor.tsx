@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useStore } from "@/lib/store";
 import { Sheet, Campo, Boton, inputClase } from "@/components/ui";
 import type { TripAction, ActionGroup, ActionStatus, Priority, Currency } from "@/lib/types";
+import { ESTADO_LABEL, PRIORIDAD_LABEL } from "@/lib/types";
 
 const GRUPOS: { value: ActionGroup; label: string }[] = [
   { value: "agenda", label: "Agenda" },
@@ -11,9 +12,20 @@ const GRUPOS: { value: ActionGroup; label: string }[] = [
   { value: "home", label: "En casa" },
 ];
 
-const KINDS_AGENDA = [
-  "turismo", "academico", "logistica", "vuelo", "estadia", "tour",
-  "visita", "curso", "charla", "evento", "comida", "ocio", "salud",
+const KINDS_AGENDA: { value: string; label: string }[] = [
+  { value: "turismo",    label: "Turismo" },
+  { value: "academico",  label: "Académico" },
+  { value: "logistica",  label: "Logística" },
+  { value: "vuelo",      label: "Vuelo" },
+  { value: "estadia",    label: "Estadía" },
+  { value: "tour",       label: "Tour" },
+  { value: "visita",     label: "Visita" },
+  { value: "curso",      label: "Curso" },
+  { value: "charla",     label: "Charla" },
+  { value: "evento",     label: "Evento" },
+  { value: "comida",     label: "Comida" },
+  { value: "ocio",       label: "Ocio" },
+  { value: "salud",      label: "Salud" },
 ];
 const ESTADOS: ActionStatus[] = ["planned", "confirmed", "in_progress", "done", "cancelled"];
 const PRIORIDADES: Priority[] = ["low", "medium", "high", "critical"];
@@ -100,7 +112,7 @@ export function ActionEditor({
             onChange={(e) => setForm({ ...form, kind: e.target.value })}
           >
             {KINDS_AGENDA.map((k) => (
-              <option key={k} value={k}>{k[0].toUpperCase() + k.slice(1)}</option>
+              <option key={k.value} value={k.value}>{k.label}</option>
             ))}
           </select>
         </Campo>
@@ -196,13 +208,13 @@ export function ActionEditor({
         <Campo label="Estado" htmlFor="ed-estado">
           <select id="ed-estado" className={inputClase} value={form.status}
             onChange={(e) => setForm({ ...form, status: e.target.value as ActionStatus })}>
-            {ESTADOS.map((s) => <option key={s} value={s}>{s}</option>)}
+            {ESTADOS.map((s) => <option key={s} value={s}>{ESTADO_LABEL[s]}</option>)}
           </select>
         </Campo>
         <Campo label="Prioridad" htmlFor="ed-prio">
           <select id="ed-prio" className={inputClase} value={form.priority}
             onChange={(e) => setForm({ ...form, priority: e.target.value as Priority })}>
-            {PRIORIDADES.map((p) => <option key={p} value={p}>{p}</option>)}
+            {PRIORIDADES.map((p) => <option key={p} value={p}>{PRIORIDAD_LABEL[p]}</option>)}
           </select>
         </Campo>
       </div>

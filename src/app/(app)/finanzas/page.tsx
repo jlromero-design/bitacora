@@ -16,7 +16,8 @@ import { fetchLiveRates } from "@/lib/quotes";
 import type { Currency, RateKind, BudgetScope } from "@/lib/types";
 import { CATALOGO, categoriaById } from "@/lib/categorias";
 import { PageHeader, SeccionTitulo, Boton, Campo, inputClase, Sheet } from "@/components/ui";
-import { Cambio, Mas, Papelera } from "@/components/icons";
+import { Cambio, Lapiz, Mas, Papelera } from "@/components/icons";
+import type { Expense } from "@/lib/types";
 
 const KINDS: { value: RateKind; label: string }[] = [
   { value: "official", label: "Oficial" },
@@ -55,10 +56,11 @@ export default function FinanzasPage() {
 
 /* ════════ TAB PRESUPUESTO ════════ */
 function Presupuesto() {
-  const { data, addBudget, deleteBudget, addExpense } = useStore();
+  const { data, addBudget, deleteBudget, addExpense, updateExpense, softDeleteExpense } = useStore();
   const [scope, setScope] = useState<BudgetScope>("month");
   const [ref, setRef] = useState<string>(() => toKey(new Date()));
   const [popup, setPopup] = useState<null | "gasto" | "presupuesto">(null);
+  const [editarGasto, setEditarGasto] = useState<Expense | null>(null);
 
   const tasas = useMemo(() => tasasActuales(data, "tarjeta"), [data]);
   const periodKey = periodKeyDe(scope, ref);
@@ -171,6 +173,14 @@ function Presupuesto() {
                     <span className="text-xs text-gris-azul-dim">{e.spentOn}</span>
                   </div>
                   <span className="text-finanzas shrink-0">{fmtMoneda(e.amount, e.currency)}</span>
+                  <button type="button" onClick={() => { setEditarGasto(e); setPopup("gasto"); }}
+                    className="grid h-7 w-7 place-items-center rounded-lg text-gris-azul-dim hover:text-laton" aria-label={`Editar ${e.title}`}>
+                    <Lapiz width={14} height={14} />
+                  </button>
+                  <button type="button" onClick={() => softDeleteExpense(e.id)}
+                    className="grid h-7 w-7 place-items-center rounded-lg text-gris-azul-dim hover:text-peligro" aria-label={`Eliminar ${e.title}`}>
+                    <Papelera width={14} height={14} />
+                  </button>
                 </li>
               );
             })}
@@ -186,8 +196,10 @@ function Presupuesto() {
           refDate={ref}
           categorias={data.categories.filter((c) => !c.deletedAt)}
           tasas={tasas}
-          onClose={() => setPopup(null)}
+          editar={popup === "gasto" ? editarGasto : null}
+          onClose={() => { setPopup(null); setEditarGasto(null); }}
           onGasto={addExpense}
+          onActualizarGasto={updateExpense}
           onPresupuesto={addBudget}
         />
       )}
@@ -196,7 +208,7 @@ function Presupuesto() {
 }
 
 function CargaPopup({
-  modo, scope, periodKey, refDate, categorias, tasas, onClose, onGasto, onPresupuesto,
+  modo, scope, periodKey, refDate, categorias, tasas, editar, onClose, onGasto, onActualizarGasto, onPresupuesto,
 }: {
   modo: "gasto" | "presupuesto";
   scope: BudgetScope;
@@ -204,15 +216,21 @@ function CargaPopup({
   refDate: string;
   categorias: ReturnType<typeof useStore>["data"]["categories"];
   tasas: ReturnType<typeof tasasActuales>;
+  editar?: Expense | null;
   onClose: () => void;
   onGasto: ReturnType<typeof useStore>["addExpense"];
+  onActualizarGasto: ReturnType<typeof useStore>["updateExpense"];
   onPresupuesto: ReturnType<typeof useStore>["addBudget"];
 }) {
-  const [f, setF] = useState({
-    title: "", amount: "", currency: "ARS" as Currency,
-    spentOn: refDate, categoryId: "",
-    categoria: "", subcategoria: "",
-  });
+  const [f, setF] = useState(() => ({
+    title: editar?.title ?? "",
+    amount: editar?.amount != null ? String(editar.amount) : "",
+    currency: (editar?.currency ?? "ARS") as Currency,
+    spentOn: editar?.spentOn ?? refDate,
+    categoryId: editar?.categoryId ?? "",
+    categoria: editar?.categoria ?? "",
+    subcategoria: editar?.subcategoria ?? "",
+  }));
 
   const catActual = f.categoria ? categoriaById(f.categoria) : undefined;
 
@@ -224,13 +242,23 @@ function CargaPopup({
     const amount = parseFloat(f.amount);
     if (!f.title.trim() || !amount) return;
     if (modo === "gasto") {
-      onGasto({
-        title: f.title.trim(), amount, currency: f.currency, spentOn: f.spentOn,
-        amountBase: convertir(amount, f.currency, "ARS", tasas),
-        baseCurrency: "ARS", categoryId: f.categoryId || null,
-        categoria: f.categoria || undefined,
-        subcategoria: f.subcategoria || undefined,
-      });
+      if (editar) {
+        onActualizarGasto(editar.id, {
+          title: f.title.trim(), amount, currency: f.currency, spentOn: f.spentOn,
+          amountBase: convertir(amount, f.currency, "ARS", tasas),
+          categoryId: f.categoryId || null,
+          categoria: f.categoria || undefined,
+          subcategoria: f.subcategoria || undefined,
+        });
+      } else {
+        onGasto({
+          title: f.title.trim(), amount, currency: f.currency, spentOn: f.spentOn,
+          amountBase: convertir(amount, f.currency, "ARS", tasas),
+          baseCurrency: "ARS", categoryId: f.categoryId || null,
+          categoria: f.categoria || undefined,
+          subcategoria: f.subcategoria || undefined,
+        });
+      }
     } else {
       onPresupuesto({
         scope, periodKey, name: f.title.trim(), amount, currency: f.currency,
@@ -240,7 +268,9 @@ function CargaPopup({
     onClose();
   }
 
-  const titulo = modo === "gasto" ? "Cargar gasto" : `Asignar presupuesto (${scope === "day" ? "día" : scope === "week" ? "semana" : "mes"})`;
+  const titulo = modo === "gasto"
+    ? (editar ? "Editar gasto" : "Cargar gasto")
+    : `Asignar presupuesto (${scope === "day" ? "día" : scope === "week" ? "semana" : "mes"})`;
 
   return (
     <Sheet open onClose={onClose} titulo={titulo}>
