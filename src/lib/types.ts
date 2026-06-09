@@ -71,6 +71,10 @@ export interface Destination extends Base {
   /** teléfono / número de referencia del contacto */
   contactPhone?: string;
   sortOrder: number;
+  /** destino suspendido (cambio de planes, cancelación, etc.) */
+  suspended?: boolean;
+  /** motivo de la suspensión */
+  suspendReason?: string;
 }
 
 /** Tipos de elemento asociables a un destino (y a la agenda) */

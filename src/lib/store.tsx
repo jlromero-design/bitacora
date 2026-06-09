@@ -100,6 +100,9 @@ interface StoreCtx {
   softDeleteHabit: (id: string) => void;
   // Destinos
   upsertDestination: (d: Partial<Destination> & { id?: string }) => void;
+  softDeleteDestination: (id: string) => void;
+  suspendDestination: (id: string, reason: string) => void;
+  unsuspendDestination: (id: string) => void;
   // Recordatorios
   markReminderSeen: (id: string) => void;
   // Notas de bitácora (una por día)
@@ -430,6 +433,33 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const softDeleteDestination: StoreCtx["softDeleteDestination"] = useCallback((id) => {
+    setData((d) => ({
+      ...d,
+      destinations: d.destinations.map((x) =>
+        x.id === id ? { ...x, deletedAt: nowIso(), updatedAt: nowIso() } : x,
+      ),
+    }));
+  }, []);
+
+  const suspendDestination: StoreCtx["suspendDestination"] = useCallback((id, reason) => {
+    setData((d) => ({
+      ...d,
+      destinations: d.destinations.map((x) =>
+        x.id === id ? { ...x, suspended: true, suspendReason: reason, updatedAt: nowIso() } : x,
+      ),
+    }));
+  }, []);
+
+  const unsuspendDestination: StoreCtx["unsuspendDestination"] = useCallback((id) => {
+    setData((d) => ({
+      ...d,
+      destinations: d.destinations.map((x) =>
+        x.id === id ? { ...x, suspended: false, suspendReason: undefined, updatedAt: nowIso() } : x,
+      ),
+    }));
+  }, []);
+
   const markReminderSeen: StoreCtx["markReminderSeen"] = useCallback((id) => {
     setData((d) => ({
       ...d,
@@ -543,6 +573,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       addHabit,
       softDeleteHabit,
       upsertDestination,
+      softDeleteDestination,
+      suspendDestination,
+      unsuspendDestination,
       markReminderSeen,
       upsertNote,
       addBudget,

@@ -22,7 +22,7 @@ const TIPO_LABEL: Record<TipoDestino, string> = {
 };
 
 export default function DestinosPage() {
-  const { data, ready, upsertDestination } = useStore();
+  const { data, ready, upsertDestination, softDeleteDestination, suspendDestination, unsuspendDestination } = useStore();
   const [editar, setEditar] = useState<Destination | null>(null);
   const [abierto, setAbierto] = useState(false);
   const [asociar, setAsociar] = useState<{ destId: string; kind: TipoDestino } | null>(null);
@@ -73,17 +73,28 @@ export default function DestinosPage() {
       <ol className="flex flex-col gap-4">
         {destinos.map((d) => {
           const dias = diasEntre(d.startsOn, d.endsOn) + 1;
-          const color = colorDestino(data, d.id);
+          const color = d.suspended ? "#6b7280" : colorDestino(data, d.id);
           const items = accionesVivas(data).filter((a) => a.destinationId === d.id);
           return (
-            <li key={d.id} className="carta overflow-hidden rounded-2xl" style={{ borderLeft: `3px solid ${color}` }}>
+            <li key={d.id}
+              className={`carta overflow-hidden rounded-2xl transition-opacity ${d.suspended ? "opacity-60" : ""}`}
+              style={{ borderLeft: `3px solid ${color}` }}>
+
+              {/* Badge de suspensión */}
+              {d.suspended && (
+                <div className="flex items-center gap-2 border-b border-[var(--hairline-soft)] bg-[color-mix(in_srgb,#6b7280_10%,transparent)] px-4 py-2">
+                  <span className="text-xs font-semibold text-[#9ca3af]">⚠ Suspendido</span>
+                  {d.suspendReason && <span className="text-xs text-gris-azul-dim">— {d.suspendReason}</span>}
+                </div>
+              )}
+
               <div className="flex items-start gap-4 p-4">
                 <span className="grid h-12 w-12 flex-shrink-0 place-items-center rounded-xl" style={{ background: `color-mix(in srgb, ${color} 18%, transparent)`, color }}>
                   <Pin width={22} height={22} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="font-display text-lg font-semibold text-marfil">{d.name}</p>
+                    <p className={`font-display text-lg font-semibold ${d.suspended ? "text-gris-azul line-through" : "text-marfil"}`}>{d.name}</p>
                     <span className="rounded-full px-2 py-0.5 text-[0.65rem] font-semibold" style={{ background: `color-mix(in srgb, ${color} 16%, transparent)`, color }}>
                       {d.currency}
                     </span>
@@ -95,79 +106,60 @@ export default function DestinosPage() {
                     {fmtCorto(d.startsOn)} – {fmtCorto(d.endsOn)} · <strong className="text-marfil-dim">{dias} días</strong>
                     {d.accommodation && <> · {d.accommodation}</>}
                   </p>
-                  {(d.contactName || d.contactPhone || d.reference) && (
-                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs">
-                      {d.reference && (esUrl(d.reference) ? (
-                        <a href={d.reference} target="_blank" rel="noopener noreferrer"
-                          className="text-laton-claro underline-offset-2 hover:underline">Reserva ↗</a>
-                      ) : (
-                        <span className="text-gris-azul-dim">{d.reference}</span>
-                      ))}
-                      {d.contactName && <span className="text-gris-azul">{d.contactName}</span>}
-                      {d.contactPhone && (
-                        <span className="flex items-center gap-1.5">
-                          <a href={`tel:${d.contactPhone.replace(/[^\d+]/g, "")}`}
-                            className="flex items-center gap-1 rounded-full border border-[var(--hairline-soft)] px-2 py-0.5 text-gris-azul hover:border-laton hover:text-marfil"
-                            aria-label={`Llamar a ${d.contactName ?? d.name}`}>
-                            <Telefono width={12} height={12} /> Llamar
-                          </a>
-                          <a href={`https://wa.me/${d.contactPhone.replace(/[^\d]/g, "")}`} target="_blank" rel="noopener noreferrer"
-                            className="flex items-center gap-1 rounded-full border border-[var(--hairline-soft)] px-2 py-0.5 text-habitos hover:border-habitos"
-                            aria-label={`WhatsApp a ${d.contactName ?? d.name}`}>
-                            <Whatsapp width={12} height={12} /> WhatsApp
-                          </a>
-                        </span>
-                      )}
-                    </div>
-                  )}
                 </div>
                 <button type="button" onClick={() => { setEditar(d); setAbierto(true); }} aria-label={`Editar ${d.name}`}
                   className="grid h-9 w-9 place-items-center rounded-lg text-gris-azul hover:bg-[var(--tinta-3)] hover:text-marfil"><Lapiz width={16} height={16} /></button>
               </div>
 
-              {/* Elementos asociados por tipo */}
-              <div className="border-t border-[var(--hairline-soft)] px-4 py-3">
-                <div className="flex flex-wrap gap-1.5">
-                  {TIPO_DESTINO.map((k) => {
-                    const Icon = ICONO_TIPO[k];
-                    const n = items.filter((a) => a.kind === k).length;
-                    return (
-                      <button
-                        key={k}
-                        type="button"
-                        onClick={() => setAsociar({ destId: d.id, kind: k })}
-                        className="flex items-center gap-1.5 rounded-full border border-[var(--hairline-soft)] px-2.5 py-1 text-xs text-gris-azul transition-colors hover:border-laton hover:text-marfil"
-                        aria-label={`Agregar ${TIPO_LABEL[k]} a ${d.name}`}
-                      >
-                        <Icon width={14} height={14} />
-                        {TIPO_LABEL[k]}
-                        {n > 0 && <span className="text-laton-claro">· {n}</span>}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {items.length > 0 && (
-                  <ul className="mt-3 flex flex-col gap-1.5">
-                    {items.slice(0, 6).map((a) => {
-                      const Icon = (a.kind && ICONO_TIPO[a.kind as TipoDestino]) || Pin;
+              {/* Elementos asociados por tipo — solo si activo */}
+              {!d.suspended && (
+                <div className="border-t border-[var(--hairline-soft)] px-4 py-3">
+                  <div className="flex flex-wrap gap-1.5">
+                    {TIPO_DESTINO.map((k) => {
+                      const Icon = ICONO_TIPO[k];
+                      const n = items.filter((a) => a.kind === k).length;
                       return (
-                        <li key={a.id} className="flex items-center gap-2 text-sm text-marfil-dim">
+                        <button key={k} type="button"
+                          onClick={() => setAsociar({ destId: d.id, kind: k })}
+                          className="flex items-center gap-1.5 rounded-full border border-[var(--hairline-soft)] px-2.5 py-1 text-xs text-gris-azul transition-colors hover:border-laton hover:text-marfil"
+                          aria-label={`Agregar ${TIPO_LABEL[k]} a ${d.name}`}>
                           <Icon width={14} height={14} />
-                          <span className="truncate">{a.title}</span>
-                          <span className="ml-auto flex-shrink-0 text-xs text-gris-azul-dim">{fmtCorto(a.actionDate)}</span>
-                        </li>
+                          {TIPO_LABEL[k]}
+                          {n > 0 && <span className="text-laton-claro">· {n}</span>}
+                        </button>
                       );
                     })}
-                  </ul>
-                )}
-              </div>
+                  </div>
+                  {items.length > 0 && (
+                    <ul className="mt-3 flex flex-col gap-1.5">
+                      {items.slice(0, 6).map((a) => {
+                        const Icon = (a.kind && ICONO_TIPO[a.kind as TipoDestino]) || Pin;
+                        return (
+                          <li key={a.id} className="flex items-center gap-2 text-sm text-marfil-dim">
+                            <Icon width={14} height={14} />
+                            <span className="truncate">{a.title}</span>
+                            <span className="ml-auto flex-shrink-0 text-xs text-gris-azul-dim">{fmtCorto(a.actionDate)}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+              )}
             </li>
           );
         })}
       </ol>
 
-      <DestinoEditor open={abierto} onClose={() => setAbierto(false)} editar={editar} onGuardar={upsertDestination} />
+      <DestinoEditor
+        open={abierto}
+        onClose={() => setAbierto(false)}
+        editar={editar}
+        onGuardar={upsertDestination}
+        onEliminar={softDeleteDestination}
+        onSuspender={suspendDestination}
+        onReactivar={unsuspendDestination}
+      />
 
       {asociar && (
         <ActionEditor
@@ -188,16 +180,41 @@ const TIPOS_ALOJAMIENTO = [
   "Departamento", "Casa / Chalet", "Bed & Breakfast", "Resort",
 ] as const;
 
+const MOTIVOS_SUSPENSION = [
+  "Vuelo cancelado",
+  "Viaje cancelado",
+  "Cambio de fechas",
+  "Problemas de alojamiento",
+  "Razones personales",
+  "Otro",
+] as const;
+
 function DestinoEditor({
-  open, onClose, editar, onGuardar,
+  open, onClose, editar, onGuardar, onEliminar, onSuspender, onReactivar,
 }: {
   open: boolean;
   onClose: () => void;
   editar: Destination | null;
   onGuardar: ReturnType<typeof useStore>["upsertDestination"];
+  onEliminar: ReturnType<typeof useStore>["softDeleteDestination"];
+  onSuspender: ReturnType<typeof useStore>["suspendDestination"];
+  onReactivar: ReturnType<typeof useStore>["unsuspendDestination"];
 }) {
   const [f, setF] = useState(() => init(editar));
-  useEffect(() => { if (open) setF(init(editar)); }, [open, editar]);
+  const [confirmarEliminar, setConfirmarEliminar] = useState(false);
+  const [suspendiendo, setSuspendiendo] = useState(false);
+  const [motivoSel, setMotivoSel] = useState<string>(MOTIVOS_SUSPENSION[0]);
+  const [motivoCustom, setMotivoCustom] = useState("");
+
+  useEffect(() => {
+    if (open) {
+      setF(init(editar));
+      setConfirmarEliminar(false);
+      setSuspendiendo(false);
+      setMotivoSel(MOTIVOS_SUSPENSION[0]);
+      setMotivoCustom("");
+    }
+  }, [open, editar]);
 
   const paisSel = buscarPais(f.country);
   const provincias = paisSel?.provincias ?? [];
@@ -286,13 +303,70 @@ function DestinoEditor({
         </Campo>
       </div>
 
-      <div className="flex justify-end gap-2">
-        <Boton variante="fantasma" onClick={onClose}>Cancelar</Boton>
-        <Boton variante="oro" disabled={!puedeGuardar}
-          onClick={() => { if (puedeGuardar) { onGuardar({ id: editar?.id, ...f }); onClose(); } }}>
-          {editar ? "Guardar" : "Crear"}
-        </Boton>
-      </div>
+      {/* Panel suspender */}
+      {suspendiendo && editar && (
+        <div className="rounded-xl border border-[var(--hairline)] bg-[var(--tinta)] p-3 flex flex-col gap-3">
+          <p className="font-display text-[0.65rem] uppercase tracking-[0.12em] text-laton-claro">⚠ Suspender destino</p>
+          <Campo label="Motivo" htmlFor="d-motivo">
+            <select id="d-motivo" className={inputClase} value={motivoSel} onChange={(e) => setMotivoSel(e.target.value)}>
+              {MOTIVOS_SUSPENSION.map((m) => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </Campo>
+          {motivoSel === "Otro" && (
+            <Campo label="Describí el motivo" htmlFor="d-motivo-custom">
+              <input id="d-motivo-custom" className={inputClase} value={motivoCustom}
+                onChange={(e) => setMotivoCustom(e.target.value)} placeholder="Ej: Huelga de transporte" />
+            </Campo>
+          )}
+          <div className="flex gap-2">
+            <Boton variante="fantasma" onClick={() => setSuspendiendo(false)}>Cancelar</Boton>
+            <Boton variante="peligro" onClick={() => {
+              const motivo = motivoSel === "Otro" ? (motivoCustom.trim() || "Otro") : motivoSel;
+              onSuspender(editar.id, motivo);
+              onClose();
+            }}>Confirmar suspensión</Boton>
+          </div>
+        </div>
+      )}
+
+      {/* Panel eliminar */}
+      {confirmarEliminar && editar && (
+        <div className="rounded-xl border border-[var(--peligro,#e05252)] bg-[color-mix(in_srgb,var(--peligro,#e05252)_10%,transparent)] p-3">
+          <p className="mb-3 text-sm text-marfil">¿Eliminar este destino? No quedará visible.</p>
+          <div className="flex gap-2">
+            <Boton variante="fantasma" onClick={() => setConfirmarEliminar(false)}>Cancelar</Boton>
+            <Boton variante="peligro" onClick={() => { onEliminar(editar.id); onClose(); }}>Sí, eliminar</Boton>
+          </div>
+        </div>
+      )}
+
+      {!suspendiendo && !confirmarEliminar && (
+        <div className="flex items-center gap-2">
+          {editar && (
+            <>
+              {editar.suspended ? (
+                <Boton variante="fantasma" onClick={() => { onReactivar(editar.id); onClose(); }}>
+                  Reactivar
+                </Boton>
+              ) : (
+                <Boton variante="peligro-fantasma" onClick={() => setSuspendiendo(true)}>
+                  Suspender
+                </Boton>
+              )}
+              <Boton variante="peligro-fantasma" onClick={() => setConfirmarEliminar(true)}>
+                Eliminar
+              </Boton>
+            </>
+          )}
+          <div className="ml-auto flex gap-2">
+            <Boton variante="fantasma" onClick={onClose}>Cancelar</Boton>
+            <Boton variante="oro" disabled={!puedeGuardar}
+              onClick={() => { if (puedeGuardar) { onGuardar({ id: editar?.id, ...f }); onClose(); } }}>
+              {editar ? "Guardar" : "Crear"}
+            </Boton>
+          </div>
+        </div>
+      )}
     </Sheet>
   );
 }
