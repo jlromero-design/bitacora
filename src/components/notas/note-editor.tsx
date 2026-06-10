@@ -16,10 +16,11 @@ type Panel = "voice" | "url" | "upload" | "contact" | null;
 type Props = {
   dayKey: string;
   nota: Note | null;
+  onNew?: () => void;
 };
 
-export function NoteEditor({ dayKey, nota }: Props) {
-  const { upsertNote, addNoteContact, removeNoteContact, addNoteAttachment, removeNoteAttachment } = useStore();
+export function NoteEditor({ dayKey, nota, onNew }: Props) {
+  const { upsertNote, updateNoteText, addNoteContact, removeNoteContact, addNoteAttachment, removeNoteAttachment } = useStore();
   const [panel, setPanel] = useState<Panel>(null);
 
   const editable = !nota || isNoteEditable(nota);
@@ -28,7 +29,11 @@ export function NoteEditor({ dayKey, nota }: Props) {
 
   function handleText(e: React.ChangeEvent<HTMLTextAreaElement>) {
     if (!editable) return;
-    upsertNote(dayKey, e.target.value);
+    if (nota) {
+      updateNoteText(nota.id, e.target.value);
+    } else {
+      upsertNote(dayKey, e.target.value);
+    }
   }
 
   function handleAddContact(contact: NoteContact) {
@@ -49,64 +54,44 @@ export function NoteEditor({ dayKey, nota }: Props) {
     if (nota) removeNoteAttachment(nota.id, id);
   }
 
+  const hasContent = (nota?.text.trim() ?? "").length > 0 || contacts.length > 0 || attachments.length > 0;
+
   return (
     <div className="flex flex-col gap-4">
-      {/* Textarea principal */}
       {editable ? (
         <textarea
           className={`${inputClase} min-h-[120px] resize-y font-serif`}
           value={nota?.text ?? ""}
           onChange={handleText}
           placeholder="¿Qué pasó hoy?…"
+          autoFocus={!nota?.text}
         />
       ) : (
         <p className="whitespace-pre-wrap font-serif text-marfil-dim">{nota?.text}</p>
       )}
 
-      {/* Personas vinculadas */}
       <NoteContactsList contacts={contacts} editable={editable} onRemove={handleRemoveContact} />
-
-      {/* Adjuntos */}
       <NoteAttachmentsList attachments={attachments} editable={editable} onRemove={handleRemoveAttachment} />
 
-      {/* Panel activo */}
-      {panel === "voice" && (
-        <VoiceRecorder
-          onSave={handleAddAttachment}
-          onCancel={() => setPanel(null)}
-        />
-      )}
-      {panel === "url" && (
-        <AttachmentUrlInput
-          onSave={handleAddAttachment}
-          onCancel={() => setPanel(null)}
-        />
-      )}
-      {panel === "upload" && (
-        <AttachmentUpload
-          onSave={handleAddAttachment}
-          onCancel={() => setPanel(null)}
-        />
-      )}
-      {panel === "contact" && (
-        <ContactPicker
-          onAdd={handleAddContact}
-          onCancel={() => setPanel(null)}
-        />
-      )}
+      {panel === "voice" && <VoiceRecorder onSave={handleAddAttachment} onCancel={() => setPanel(null)} />}
+      {panel === "url" && <AttachmentUrlInput onSave={handleAddAttachment} onCancel={() => setPanel(null)} />}
+      {panel === "upload" && <AttachmentUpload onSave={handleAddAttachment} onCancel={() => setPanel(null)} />}
+      {panel === "contact" && <ContactPicker onAdd={handleAddContact} onCancel={() => setPanel(null)} />}
 
-      {/* Barra de acciones */}
       {editable && !panel && nota && (
         <div className="flex flex-wrap gap-2">
           <ActionBtn onClick={() => setPanel("contact")} label="👤 Persona" />
           <ActionBtn onClick={() => setPanel("upload")} label="📄 Archivo" />
           <ActionBtn onClick={() => setPanel("url")} label="🔗 Enlace" />
           <ActionBtn onClick={() => setPanel("voice")} label="🎙 Voz" />
+          {onNew && hasContent && (
+            <ActionBtn onClick={onNew} label="✦ Nueva nota" />
+          )}
         </div>
       )}
 
       {editable && !panel && !nota && (
-        <p className="text-xs text-gris-azul-dim italic">
+        <p className="text-xs italic text-gris-azul-dim">
           Escribí algo primero para poder agregar personas o adjuntos.
         </p>
       )}

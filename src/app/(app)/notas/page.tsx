@@ -3,18 +3,22 @@ import { useMemo } from "react";
 import { useStore } from "@/lib/store";
 import { useUI } from "@/lib/ui";
 import { useRouter } from "next/navigation";
-import { fmtLargo, etiquetaZona } from "@/lib/dates";
+import { fmtLargo, etiquetaZona, toKey } from "@/lib/dates";
 import { isNoteEditable, attachmentIcon } from "@/lib/note-utils";
-import { PageHeader } from "@/components/ui";
-import { Libro } from "@/components/icons";
+import { PageHeader, Boton } from "@/components/ui";
+import { Libro, Mas } from "@/components/icons";
+
+function genNoteId() {
+  return `note-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+}
 
 export default function NotasPage() {
-  const { data, ready } = useStore();
+  const { data, ready, addNote } = useStore();
   const { setSelectedDay } = useUI();
   const router = useRouter();
 
   const notas = useMemo(
-    () => [...(data.notes ?? [])].sort((a, b) => b.dayKey.localeCompare(a.dayKey)),
+    () => [...(data.notes ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
     [data.notes],
   );
 
@@ -25,9 +29,25 @@ export default function NotasPage() {
     router.push("/agenda");
   }
 
+  function nuevaNota() {
+    const hoy = toKey(new Date());
+    const id = genNoteId();
+    addNote(hoy, id);
+    setSelectedDay(hoy);
+    router.push("/agenda");
+  }
+
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4">
-      <PageHeader titulo="Notas" sub="Tu bitácora, día por día" />
+      <PageHeader
+        titulo="Notas"
+        sub="Tu bitácora, día por día"
+        accion={
+          <Boton variante="oro" onClick={nuevaNota}>
+            <Mas width={16} height={16} /> Nueva nota
+          </Boton>
+        }
+      />
 
       {notas.length === 0 ? (
         <div className="carta rounded-2xl px-6 py-12 text-center">

@@ -14,13 +14,18 @@ import { Flecha, Mas, Lapiz, Papelera, Reloj, Pin } from "@/components/icons";
 import Link from "next/link";
 import { etiquetaZona } from "@/lib/dates";
 
+function genNoteId() {
+  return `note-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+}
+
 export default function AgendaPage() {
-  const { data, ready, softDeleteAction, setStatus, upsertNote } = useStore();
+  const { data, ready, softDeleteAction, setStatus, addNote } = useStore();
   const { selectedDay, setSelectedDay } = useUI();
   const [editor, setEditor] = useState<{ open: boolean; editar: TripAction | null }>({
     open: false,
     editar: null,
   });
+  const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
 
   if (!ready) return <Cargando />;
 
@@ -28,10 +33,22 @@ export default function AgendaPage() {
   const dest = destinoDeFecha(data, selectedDay);
   const diaNum = diasEntre(data.trip.startsOn, selectedDay) + 1;
   const totalDias = diasEntre(data.trip.startsOn, data.trip.endsOn) + 1;
-  const nota = data.notes.find((n) => n.dayKey === selectedDay) ?? null;
-  // Editable solo dentro de las 24h de creada (o si todavía no existe)
-  const editableNota =
-    !nota || Date.now() - new Date(nota.createdAt).getTime() < 24 * 3600 * 1000;
+
+  const notasDelDia = data.notes
+    .filter((n) => n.dayKey === selectedDay)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+  const notaActiva = activeNoteId
+    ? (notasDelDia.find((n) => n.id === activeNoteId) ?? notasDelDia[0] ?? null)
+    : (notasDelDia[0] ?? null);
+
+  const editableNota = !notaActiva || Date.now() - new Date(notaActiva.createdAt).getTime() < 24 * 3600 * 1000;
+
+  function crearNuevaNota() {
+    const id = genNoteId();
+    addNote(selectedDay, id);
+    setActiveNoteId(id);
+  }
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-4">
@@ -107,18 +124,44 @@ export default function AgendaPage() {
 
       {/* Nota del día */}
       <div className="mt-2">
-        <SeccionTitulo>Nota del día</SeccionTitulo>
-        <div className="carta rounded-2xl p-4">
-          <NoteEditor dayKey={selectedDay} nota={nota} />
-          {!editableNota && nota && (
-            <p className="mt-2 text-[0.7rem] text-gris-azul-dim">
-              Escrita en {etiquetaZona(nota.tz)} · archivada en{" "}
-              <Link href="/notas" className="text-laton-claro underline-offset-2 hover:underline">Notas</Link>.
-            </p>
+        <SeccionTitulo>
+          Notas del día
+          {notasDelDia.length > 1 && (
+            <span className="ml-2 rounded-full bg-[var(--tinta-3)] px-2 py-0.5 text-[0.65rem] text-gris-azul">
+              {notasDelDia.length}
+            </span>
           )}
+        </SeccionTitulo>
+
+        {/* Notas anteriores del mismo día (colapsadas) */}
+        {notasDelDia.length > 1 && (
+          <div className="mb-2 flex flex-col gap-1.5">
+            {notasDelDia.slice(1).map((n) => (
+              <button
+                key={n.id}
+                type="button"
+                onClick={() => setActiveNoteId(n.id === activeNoteId ? null : n.id)}
+                className={`carta flex items-start gap-2 rounded-xl p-3 text-left text-sm transition-shadow hover:shadow-[var(--sombra-md)] ${n.id === notaActiva?.id ? "ring-1 ring-laton" : ""}`}
+              >
+                <span className="mt-0.5 text-xs text-gris-azul-dim">{new Date(n.createdAt).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}</span>
+                <p className="flex-1 truncate font-serif text-marfil-dim">{n.text || <em className="text-gris-azul">Sin texto</em>}</p>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Nota activa / editor */}
+        <div className="carta rounded-2xl p-4">
+          <NoteEditor dayKey={selectedDay} nota={notaActiva} onNew={crearNuevaNota} />
           {editableNota && (
             <p className="mt-1 text-[0.7rem] text-gris-azul-dim">
               Editable por 24 h. Después queda guardada en{" "}
+              <Link href="/notas" className="text-laton-claro underline-offset-2 hover:underline">Notas</Link>.
+            </p>
+          )}
+          {!editableNota && notaActiva && (
+            <p className="mt-2 text-[0.7rem] text-gris-azul-dim">
+              Escrita en {etiquetaZona(notaActiva.tz)} · archivada en{" "}
               <Link href="/notas" className="text-laton-claro underline-offset-2 hover:underline">Notas</Link>.
             </p>
           )}

@@ -110,8 +110,10 @@ interface StoreCtx {
   unsuspendDestination: (id: string) => void;
   // Recordatorios
   markReminderSeen: (id: string) => void;
-  // Notas de bitácora (una por día)
+  // Notas de bitácora (múltiples por día)
   upsertNote: (dayKey: string, texto: string) => void;
+  addNote: (dayKey: string, id: string) => void;
+  updateNoteText: (id: string, texto: string) => void;
   addNoteContact: (noteId: string, contact: NoteContact) => void;
   removeNoteContact: (noteId: string, contactId: string) => void;
   addNoteAttachment: (noteId: string, attachment: NoteAttachment) => void;
@@ -519,6 +521,29 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const addNote: StoreCtx["addNote"] = useCallback((dayKey, id) => {
+    setData((d) => {
+      const note: Note = {
+        id,
+        dayKey,
+        text: "",
+        createdAt: nowIso(),
+        updatedAt: nowIso(),
+        tz: zonaDispositivo(),
+      };
+      return { ...d, notes: [...d.notes, note] };
+    });
+  }, []);
+
+  const updateNoteText: StoreCtx["updateNoteText"] = useCallback((id, texto) => {
+    setData((d) => ({
+      ...d,
+      notes: d.notes.map((n) =>
+        n.id === id ? { ...n, text: texto, updatedAt: nowIso() } : n,
+      ),
+    }));
+  }, []);
+
   const addNoteContact: StoreCtx["addNoteContact"] = useCallback((noteId, contact) => {
     setData((d) => ({
       ...d,
@@ -658,6 +683,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       unsuspendDestination,
       markReminderSeen,
       upsertNote,
+      addNote,
+      updateNoteText,
       addNoteContact,
       removeNoteContact,
       addNoteAttachment,
@@ -674,7 +701,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setStatus, addExpense, updateExpense, softDeleteExpense, restoreExpense,
       upsertCategory, upsertRate, toggleHabit, addHabit, softDeleteHabit, restoreHabit,
       upsertDestination,
-      markReminderSeen, upsertNote,
+      markReminderSeen, upsertNote, addNote, updateNoteText,
       addNoteContact, removeNoteContact, addNoteAttachment, removeNoteAttachment,
       addBudget, updateBudget, deleteBudget,
       updateSettings, addPersona, removePersona, addPersonaItem, togglePersonaItem,
