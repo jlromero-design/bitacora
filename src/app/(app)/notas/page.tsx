@@ -1,5 +1,6 @@
 "use client";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import type { Note } from "@/lib/types";
 import { useStore } from "@/lib/store";
 import { useUI } from "@/lib/ui";
 import { useRouter } from "next/navigation";
@@ -7,6 +8,7 @@ import { fmtLargo, etiquetaZona, toKey } from "@/lib/dates";
 import { isNoteEditable, attachmentIcon } from "@/lib/note-utils";
 import { PageHeader, Boton } from "@/components/ui";
 import { Libro, Mas } from "@/components/icons";
+import { SharePanel } from "@/components/notas/share-panel";
 
 function genNoteId() {
   return `note-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
@@ -16,6 +18,7 @@ export default function NotasPage() {
   const { data, ready, addNote } = useStore();
   const { setSelectedDay } = useUI();
   const router = useRouter();
+  const [compartiendo, setCompartiendo] = useState<Note | null>(null);
 
   const notas = useMemo(
     () => [...(data.notes ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
@@ -62,61 +65,80 @@ export default function NotasPage() {
             const contacts = n.contacts ?? [];
             const attachments = n.attachments ?? [];
 
+            const tieneContenido = !!(n.text.trim() || contacts.length > 0 || attachments.length > 0);
             return (
               <li key={n.id} className="relative">
                 <span className="absolute -left-[27px] top-1.5 grid h-5 w-5 place-items-center rounded-full border border-[var(--hairline)] bg-[var(--tinta)] text-laton">
                   <Libro width={11} height={11} />
                 </span>
-                <button
-                  type="button"
-                  onClick={() => abrirDia(n.dayKey)}
-                  className="carta block w-full rounded-2xl p-4 text-left transition-shadow hover:shadow-[var(--sombra-md)]"
-                >
-                  <div className="mb-1 flex flex-wrap items-center gap-2">
-                    <span className="font-display text-sm capitalize text-laton-claro">
-                      {fmtLargo(n.dayKey)}
-                    </span>
-                    {editable && (
-                      <span className="rounded-full bg-[var(--habitos-bg)] px-2 py-0.5 text-[0.6rem] font-semibold text-habitos">
-                        editable 24 h
+                <div className="carta rounded-2xl">
+                  {/* Área principal — abre la agenda */}
+                  <button
+                    type="button"
+                    onClick={() => abrirDia(n.dayKey)}
+                    className="block w-full p-4 text-left"
+                  >
+                    <div className="mb-1 flex flex-wrap items-center gap-2">
+                      <span className="font-display text-sm capitalize text-laton-claro">
+                        {fmtLargo(n.dayKey)}
                       </span>
+                      {editable && (
+                        <span className="rounded-full bg-[var(--habitos-bg)] px-2 py-0.5 text-[0.6rem] font-semibold text-habitos">
+                          editable 24 h
+                        </span>
+                      )}
+                    </div>
+
+                    {n.text && (
+                      <p className="whitespace-pre-wrap font-serif text-marfil-dim line-clamp-3">{n.text}</p>
                     )}
-                  </div>
 
-                  {n.text && (
-                    <p className="whitespace-pre-wrap font-serif text-marfil-dim line-clamp-3">{n.text}</p>
-                  )}
+                    {contacts.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {contacts.map((c) => (
+                          <span key={c.id} className="flex items-center gap-1 rounded-full border border-[var(--hairline-soft)] bg-[var(--tinta)] px-2 py-0.5 text-xs text-gris-azul">
+                            {c.source === "picker" ? "📱" : "✏"} {c.name}
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
-                  {/* Chips de personas */}
-                  {contacts.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {contacts.map((c) => (
-                        <span key={c.id} className="flex items-center gap-1 rounded-full border border-[var(--hairline-soft)] bg-[var(--tinta)] px-2 py-0.5 text-xs text-gris-azul">
-                          {c.source === "picker" ? "📱" : "✏"} {c.name}
-                        </span>
-                      ))}
+                    {attachments.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {attachments.map((att) => (
+                          <span key={att.id} className="flex items-center gap-1 rounded-full border border-[var(--hairline-soft)] bg-[var(--tinta)] px-2 py-0.5 text-xs text-gris-azul">
+                            {attachmentIcon(att.kind)} {att.name.length > 24 ? att.name.slice(0, 24) + "…" : att.name}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    <p className="mt-2 text-[0.7rem] text-gris-azul-dim">
+                      Escrita en {etiquetaZona(n.tz)}
+                    </p>
+                  </button>
+
+                  {/* Barra de acciones de la tarjeta */}
+                  {tieneContenido && (
+                    <div className="flex justify-end border-t border-[var(--hairline-soft)] px-4 py-2">
+                      <button
+                        type="button"
+                        onClick={() => setCompartiendo(n)}
+                        className="rounded-full border border-[var(--hairline)] px-3 py-1 text-xs text-gris-azul transition-colors hover:border-laton hover:text-laton-claro"
+                      >
+                        📤 Compartir
+                      </button>
                     </div>
                   )}
-
-                  {/* Chips de adjuntos */}
-                  {attachments.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {attachments.map((att) => (
-                        <span key={att.id} className="flex items-center gap-1 rounded-full border border-[var(--hairline-soft)] bg-[var(--tinta)] px-2 py-0.5 text-xs text-gris-azul">
-                          {attachmentIcon(att.kind)} {att.name.length > 24 ? att.name.slice(0, 24) + "…" : att.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  <p className="mt-2 text-[0.7rem] text-gris-azul-dim">
-                    Escrita en {etiquetaZona(n.tz)}
-                  </p>
-                </button>
+                </div>
               </li>
             );
           })}
         </ol>
+      )}
+
+      {compartiendo && (
+        <SharePanel nota={compartiendo} onClose={() => setCompartiendo(null)} />
       )}
     </div>
   );

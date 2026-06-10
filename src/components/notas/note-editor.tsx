@@ -10,8 +10,9 @@ import { AttachmentUpload } from "./attachment-upload";
 import { ContactPicker } from "./contact-picker";
 import { NoteContactsList } from "./note-contacts-list";
 import { NoteAttachmentsList } from "./note-attachments-list";
+import { SharePanel } from "./share-panel";
 
-type Panel = "voice" | "url" | "upload" | "contact" | null;
+type Panel = "voice" | "url" | "upload" | "contact" | "share" | null;
 
 type Props = {
   dayKey: string;
@@ -78,15 +79,26 @@ export function NoteEditor({ dayKey, nota, onNew }: Props) {
       {panel === "upload" && <AttachmentUpload onSave={handleAddAttachment} onCancel={() => setPanel(null)} />}
       {panel === "contact" && <ContactPicker onAdd={handleAddContact} onCancel={() => setPanel(null)} />}
 
+      {panel === "share" && nota && (
+        <SharePanel nota={nota} onClose={() => setPanel(null)} />
+      )}
+
       {editable && !panel && nota && (
         <div className="flex flex-wrap gap-2">
           <ActionBtn onClick={() => setPanel("contact")} label="👤 Persona" />
           <ActionBtn onClick={() => setPanel("upload")} label="📄 Archivo" />
           <ActionBtn onClick={() => setPanel("url")} label="🔗 Enlace" />
           <ActionBtn onClick={() => setPanel("voice")} label="🎙 Voz" />
+          {hasContent && <ActionBtn onClick={() => setPanel("share")} label="📤 Compartir" />}
           {onNew && hasContent && (
             <ActionBtn onClick={onNew} label="✦ Nueva nota" />
           )}
+        </div>
+      )}
+
+      {!editable && !panel && nota && hasContent && (
+        <div className="flex flex-wrap gap-2">
+          <ActionBtn onClick={() => setPanel("share")} label="📤 Compartir" />
         </div>
       )}
 
