@@ -11,6 +11,7 @@ import { ContactPicker } from "./contact-picker";
 import { NoteContactsList } from "./note-contacts-list";
 import { NoteAttachmentsList } from "./note-attachments-list";
 import { SharePanel } from "./share-panel";
+import { Boton } from "@/components/ui";
 
 type Panel = "voice" | "url" | "upload" | "contact" | "share" | null;
 
@@ -21,8 +22,9 @@ type Props = {
 };
 
 export function NoteEditor({ dayKey, nota, onNew }: Props) {
-  const { upsertNote, updateNoteText, addNoteContact, removeNoteContact, addNoteAttachment, removeNoteAttachment } = useStore();
+  const { upsertNote, updateNoteText, softDeleteNote, addNoteContact, removeNoteContact, addNoteAttachment, removeNoteAttachment } = useStore();
   const [panel, setPanel] = useState<Panel>(null);
+  const [confirmarEliminar, setConfirmarEliminar] = useState(false);
 
   const editable = !nota || isNoteEditable(nota);
   const contacts = nota?.contacts ?? [];
@@ -99,6 +101,30 @@ export function NoteEditor({ dayKey, nota, onNew }: Props) {
       {!editable && !panel && nota && hasContent && (
         <div className="flex flex-wrap gap-2">
           <ActionBtn onClick={() => setPanel("share")} label="📤 Compartir" />
+        </div>
+      )}
+
+      {/* Confirmación de eliminación */}
+      {confirmarEliminar && nota && (
+        <div className="rounded-xl border border-[var(--peligro,#e05252)] bg-[color-mix(in_srgb,var(--peligro,#e05252)_10%,transparent)] p-3">
+          <p className="mb-3 text-sm text-marfil">¿Eliminar esta nota? Va a la papelera y podés recuperarla.</p>
+          <div className="flex gap-2">
+            <Boton variante="fantasma" onClick={() => setConfirmarEliminar(false)}>Cancelar</Boton>
+            <Boton variante="peligro" onClick={() => softDeleteNote(nota.id)}>Sí, eliminar</Boton>
+          </div>
+        </div>
+      )}
+
+      {/* Botón eliminar — visible cuando hay nota y no hay panel abierto */}
+      {nota && !panel && !confirmarEliminar && (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() => setConfirmarEliminar(true)}
+            className="text-xs text-gris-azul-dim hover:text-peligro transition-colors"
+          >
+            🗑 Eliminar nota
+          </button>
         </div>
       )}
 

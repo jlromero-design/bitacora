@@ -1,12 +1,12 @@
 "use client";
 import { useStore } from "@/lib/store";
-import { fmtCorto } from "@/lib/dates";
+import { fmtCorto, fmtLargo } from "@/lib/dates";
 import { fmtMoneda } from "@/lib/fx";
 import { categoriaById } from "@/lib/categorias";
 import { PageHeader, Boton, GrupoBadge } from "@/components/ui";
 
 export default function PapeleraPage() {
-  const { data, ready, restoreAction, restoreExpense, restoreHabit } = useStore();
+  const { data, ready, restoreAction, restoreExpense, restoreHabit, restoreNote } = useStore();
   if (!ready) return null;
 
   const actividades = data.actions
@@ -21,7 +21,11 @@ export default function PapeleraPage() {
     .filter((h) => h.deletedAt)
     .sort((a, b) => (b.deletedAt ?? "").localeCompare(a.deletedAt ?? ""));
 
-  const total = actividades.length + gastos.length + habitos.length;
+  const notas = (data.notes ?? [])
+    .filter((n) => n.deletedAt)
+    .sort((a, b) => (b.deletedAt ?? "").localeCompare(a.deletedAt ?? ""));
+
+  const total = actividades.length + gastos.length + habitos.length + notas.length;
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
@@ -103,6 +107,30 @@ export default function PapeleraPage() {
                       </p>
                     </div>
                     <Boton variante="primario" onClick={() => restoreHabit(h.id)} aria-label={`Recuperar ${h.name}`}>
+                      ↺ Recuperar
+                    </Boton>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {notas.length > 0 && (
+            <section>
+              <h2 className="mb-2 font-display text-xs uppercase tracking-widest text-gris-azul">
+                Notas · {notas.length}
+              </h2>
+              <ul className="flex flex-col gap-2.5">
+                {notas.map((n) => (
+                  <li key={n.id} className="carta flex items-center gap-3 rounded-2xl p-4 opacity-80">
+                    <span className="text-xl" aria-hidden="true">📓</span>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-serif text-marfil line-through opacity-70 line-clamp-2">
+                        {n.text || <em className="not-italic text-gris-azul">Sin texto</em>}
+                      </p>
+                      <p className="mt-0.5 text-xs text-gris-azul-dim">{fmtLargo(n.dayKey)}</p>
+                    </div>
+                    <Boton variante="primario" onClick={() => restoreNote(n.id)} aria-label="Recuperar nota">
                       ↺ Recuperar
                     </Boton>
                   </li>

@@ -226,6 +226,7 @@ export interface Note {
   text: string;
   createdAt: string;   // ISO
   updatedAt: string;   // ISO
+  deletedAt?: string | null;
   tz: string;          // zona del dispositivo donde se escribió
   contacts?: NoteContact[];
   attachments?: NoteAttachment[];

@@ -21,7 +21,7 @@ export default function NotasPage() {
   const [compartiendo, setCompartiendo] = useState<Note | null>(null);
 
   const notas = useMemo(
-    () => [...(data.notes ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+    () => [...(data.notes ?? [])].filter((n) => !n.deletedAt).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
     [data.notes],
   );
 

@@ -35,7 +35,7 @@ export default function AgendaPage() {
   const totalDias = diasEntre(data.trip.startsOn, data.trip.endsOn) + 1;
 
   const notasDelDia = data.notes
-    .filter((n) => n.dayKey === selectedDay)
+    .filter((n) => n.dayKey === selectedDay && !n.deletedAt)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   const notaActiva = activeNoteId

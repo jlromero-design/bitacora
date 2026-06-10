@@ -114,6 +114,8 @@ interface StoreCtx {
   upsertNote: (dayKey: string, texto: string) => void;
   addNote: (dayKey: string, id: string) => void;
   updateNoteText: (id: string, texto: string) => void;
+  softDeleteNote: (id: string) => void;
+  restoreNote: (id: string) => void;
   addNoteContact: (noteId: string, contact: NoteContact) => void;
   removeNoteContact: (noteId: string, contactId: string) => void;
   addNoteAttachment: (noteId: string, attachment: NoteAttachment) => void;
@@ -544,6 +546,24 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
+  const softDeleteNote: StoreCtx["softDeleteNote"] = useCallback((id) => {
+    setData((d) => ({
+      ...d,
+      notes: d.notes.map((n) =>
+        n.id === id ? { ...n, deletedAt: nowIso(), updatedAt: nowIso() } : n,
+      ),
+    }));
+  }, []);
+
+  const restoreNote: StoreCtx["restoreNote"] = useCallback((id) => {
+    setData((d) => ({
+      ...d,
+      notes: d.notes.map((n) =>
+        n.id === id ? { ...n, deletedAt: null, updatedAt: nowIso() } : n,
+      ),
+    }));
+  }, []);
+
   const addNoteContact: StoreCtx["addNoteContact"] = useCallback((noteId, contact) => {
     setData((d) => ({
       ...d,
@@ -685,6 +705,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       upsertNote,
       addNote,
       updateNoteText,
+      softDeleteNote,
+      restoreNote,
       addNoteContact,
       removeNoteContact,
       addNoteAttachment,
@@ -701,7 +723,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setStatus, addExpense, updateExpense, softDeleteExpense, restoreExpense,
       upsertCategory, upsertRate, toggleHabit, addHabit, softDeleteHabit, restoreHabit,
       upsertDestination,
-      markReminderSeen, upsertNote, addNote, updateNoteText,
+      markReminderSeen, upsertNote, addNote, updateNoteText, softDeleteNote, restoreNote,
       addNoteContact, removeNoteContact, addNoteAttachment, removeNoteAttachment,
       addBudget, updateBudget, deleteBudget,
       updateSettings, addPersona, removePersona, addPersonaItem, togglePersonaItem,
