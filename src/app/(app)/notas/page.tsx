@@ -4,6 +4,7 @@ import { useStore } from "@/lib/store";
 import { useUI } from "@/lib/ui";
 import { useRouter } from "next/navigation";
 import { fmtLargo, etiquetaZona } from "@/lib/dates";
+import { isNoteEditable, attachmentIcon } from "@/lib/note-utils";
 import { PageHeader } from "@/components/ui";
 import { Libro } from "@/components/icons";
 
@@ -37,7 +38,10 @@ export default function NotasPage() {
       ) : (
         <ol className="relative ml-3 flex flex-col gap-4 border-l border-[var(--hairline-soft)] pl-5">
           {notas.map((n) => {
-            const reciente = Date.now() - new Date(n.createdAt).getTime() < 24 * 3600 * 1000;
+            const editable = isNoteEditable(n);
+            const contacts = n.contacts ?? [];
+            const attachments = n.attachments ?? [];
+
             return (
               <li key={n.id} className="relative">
                 <span className="absolute -left-[27px] top-1.5 grid h-5 w-5 place-items-center rounded-full border border-[var(--hairline)] bg-[var(--tinta)] text-laton">
@@ -52,13 +56,39 @@ export default function NotasPage() {
                     <span className="font-display text-sm capitalize text-laton-claro">
                       {fmtLargo(n.dayKey)}
                     </span>
-                    {reciente && (
+                    {editable && (
                       <span className="rounded-full bg-[var(--habitos-bg)] px-2 py-0.5 text-[0.6rem] font-semibold text-habitos">
                         editable 24 h
                       </span>
                     )}
                   </div>
-                  <p className="whitespace-pre-wrap font-serif text-marfil-dim">{n.text}</p>
+
+                  {n.text && (
+                    <p className="whitespace-pre-wrap font-serif text-marfil-dim line-clamp-3">{n.text}</p>
+                  )}
+
+                  {/* Chips de personas */}
+                  {contacts.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {contacts.map((c) => (
+                        <span key={c.id} className="flex items-center gap-1 rounded-full border border-[var(--hairline-soft)] bg-[var(--tinta)] px-2 py-0.5 text-xs text-gris-azul">
+                          {c.source === "picker" ? "📱" : "✏"} {c.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Chips de adjuntos */}
+                  {attachments.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {attachments.map((att) => (
+                        <span key={att.id} className="flex items-center gap-1 rounded-full border border-[var(--hairline-soft)] bg-[var(--tinta)] px-2 py-0.5 text-xs text-gris-azul">
+                          {attachmentIcon(att.kind)} {att.name.length > 24 ? att.name.slice(0, 24) + "…" : att.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
                   <p className="mt-2 text-[0.7rem] text-gris-azul-dim">
                     Escrita en {etiquetaZona(n.tz)}
                   </p>

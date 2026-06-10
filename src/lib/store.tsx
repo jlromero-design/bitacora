@@ -23,10 +23,13 @@ import type {
   BudgetCategory,
   Reminder,
   Note,
+  NoteContact,
+  NoteAttachment,
   BudgetAlloc,
   Persona,
   PersonaItem,
 } from "./types";
+import { deleteBlob } from "./idb-attachments";
 import { zonaDispositivo } from "./dates";
 
 const STORAGE_KEY = "valejuri:data:v2";
@@ -109,6 +112,10 @@ interface StoreCtx {
   markReminderSeen: (id: string) => void;
   // Notas de bitácora (una por día)
   upsertNote: (dayKey: string, texto: string) => void;
+  addNoteContact: (noteId: string, contact: NoteContact) => void;
+  removeNoteContact: (noteId: string, contactId: string) => void;
+  addNoteAttachment: (noteId: string, attachment: NoteAttachment) => void;
+  removeNoteAttachment: (noteId: string, attachmentId: string) => void;
   // Presupuestos por período
   addBudget: (b: Partial<BudgetAlloc> & Pick<BudgetAlloc, "scope" | "periodKey" | "name" | "amount">) => void;
   updateBudget: (id: string, patch: Partial<BudgetAlloc>) => void;
@@ -512,6 +519,57 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const addNoteContact: StoreCtx["addNoteContact"] = useCallback((noteId, contact) => {
+    setData((d) => ({
+      ...d,
+      notes: d.notes.map((n) =>
+        n.id === noteId
+          ? { ...n, contacts: [...(n.contacts ?? []), contact], updatedAt: nowIso() }
+          : n,
+      ),
+    }));
+  }, []);
+
+  const removeNoteContact: StoreCtx["removeNoteContact"] = useCallback((noteId, contactId) => {
+    setData((d) => ({
+      ...d,
+      notes: d.notes.map((n) =>
+        n.id === noteId
+          ? { ...n, contacts: (n.contacts ?? []).filter((c) => c.id !== contactId), updatedAt: nowIso() }
+          : n,
+      ),
+    }));
+  }, []);
+
+  const addNoteAttachment: StoreCtx["addNoteAttachment"] = useCallback((noteId, attachment) => {
+    setData((d) => ({
+      ...d,
+      notes: d.notes.map((n) =>
+        n.id === noteId
+          ? { ...n, attachments: [...(n.attachments ?? []), attachment], updatedAt: nowIso() }
+          : n,
+      ),
+    }));
+  }, []);
+
+  const removeNoteAttachment: StoreCtx["removeNoteAttachment"] = useCallback((noteId, attachmentId) => {
+    setData((d) => {
+      const note = d.notes.find((n) => n.id === noteId);
+      const att = note?.attachments?.find((a) => a.id === attachmentId);
+      if (att?.storage === "indexeddb" && att.idbKey) {
+        deleteBlob(att.idbKey).catch(() => {});
+      }
+      return {
+        ...d,
+        notes: d.notes.map((n) =>
+          n.id === noteId
+            ? { ...n, attachments: (n.attachments ?? []).filter((a) => a.id !== attachmentId), updatedAt: nowIso() }
+            : n,
+        ),
+      };
+    });
+  }, []);
+
   const addBudget: StoreCtx["addBudget"] = useCallback((b) => {
     const budget: BudgetAlloc = {
       id: genId("bud"),
@@ -600,6 +658,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       unsuspendDestination,
       markReminderSeen,
       upsertNote,
+      addNoteContact,
+      removeNoteContact,
+      addNoteAttachment,
+      removeNoteAttachment,
       addBudget,
       updateBudget,
       deleteBudget,
@@ -612,7 +674,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setStatus, addExpense, updateExpense, softDeleteExpense, restoreExpense,
       upsertCategory, upsertRate, toggleHabit, addHabit, softDeleteHabit, restoreHabit,
       upsertDestination,
-      markReminderSeen, upsertNote, addBudget, updateBudget, deleteBudget,
+      markReminderSeen, upsertNote,
+      addNoteContact, removeNoteContact, addNoteAttachment, removeNoteAttachment,
+      addBudget, updateBudget, deleteBudget,
       updateSettings, addPersona, removePersona, addPersonaItem, togglePersonaItem,
       removePersonaItem, resetAll,
     ],

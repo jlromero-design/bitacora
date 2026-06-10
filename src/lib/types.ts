@@ -192,6 +192,33 @@ export type Zodiac =
   | "aries" | "tauro" | "geminis" | "cancer" | "leo" | "virgo"
   | "libra" | "escorpio" | "sagitario" | "capricornio" | "acuario" | "piscis";
 
+/** Contacto asociado a una nota — puede venir del Contact Picker API o ingreso manual */
+export interface NoteContact {
+  id: string;
+  name: string;
+  phone?: string;
+  email?: string;
+  source: "picker" | "manual";
+}
+
+export type AttachmentKind = "document" | "image" | "voice";
+export type AttachmentStorage = "indexeddb" | "supabase" | "url";
+
+/** Adjunto de una nota: documento, imagen, nota de voz o URL externa */
+export interface NoteAttachment {
+  id: string;
+  kind: AttachmentKind;
+  name: string;
+  mimeType: string;
+  storage: AttachmentStorage;
+  idbKey?: string;       // clave en IndexedDB (storage === "indexeddb")
+  storagePath?: string;  // path en Supabase Storage (storage === "supabase")
+  url?: string;          // URL externa (storage === "url") o pública de Supabase
+  sizeBytes?: number;
+  durationSec?: number;  // solo para voice
+  createdAt: string;     // ISO
+}
+
 /** Nota de bitácora — editable 24h, luego queda como registro */
 export interface Note {
   id: string;
@@ -200,6 +227,8 @@ export interface Note {
   createdAt: string;   // ISO
   updatedAt: string;   // ISO
   tz: string;          // zona del dispositivo donde se escribió
+  contacts?: NoteContact[];
+  attachments?: NoteAttachment[];
 }
 
 export type BudgetScope = "day" | "week" | "month";

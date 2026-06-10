@@ -9,6 +9,7 @@ import type { TripAction, Currency } from "@/lib/types";
 import { PageHeader, Boton, GrupoBadge, EstadoBadge, SeccionTitulo } from "@/components/ui";
 import { ActionEditor } from "@/components/actions/action-editor";
 import { DailyQuote, BirthdayBanner } from "@/components/agenda/daily-extras";
+import { NoteEditor } from "@/components/notas/note-editor";
 import { Flecha, Mas, Lapiz, Papelera, Reloj, Pin } from "@/components/icons";
 import Link from "next/link";
 import { etiquetaZona } from "@/lib/dates";
@@ -108,29 +109,18 @@ export default function AgendaPage() {
       <div className="mt-2">
         <SeccionTitulo>Nota del día</SeccionTitulo>
         <div className="carta rounded-2xl p-4">
-          {editableNota ? (
-            <>
-              <label htmlFor="day-note" className="sr-only">Nota libre del día</label>
-              <textarea
-                id="day-note"
-                className="min-h-[80px] w-full resize-y bg-transparent font-serif text-marfil outline-none placeholder:italic placeholder:text-gris-azul-dim"
-                value={nota?.text ?? ""}
-                onChange={(e) => upsertNote(selectedDay, e.target.value)}
-                placeholder="¿Qué querés recordar de este día? Sensaciones, ideas, lo que sea…"
-              />
-              <p className="mt-1 text-[0.7rem] text-gris-azul-dim">
-                Editable por 24 h. Después queda guardada en{" "}
-                <Link href="/notas" className="text-laton-claro underline-offset-2 hover:underline">Notas</Link>.
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="whitespace-pre-wrap font-serif text-marfil-dim">{nota?.text}</p>
-              <p className="mt-2 text-[0.7rem] text-gris-azul-dim">
-                Escrita en {etiquetaZona(nota!.tz)} · archivada en{" "}
-                <Link href="/notas" className="text-laton-claro underline-offset-2 hover:underline">Notas</Link>.
-              </p>
-            </>
+          <NoteEditor dayKey={selectedDay} nota={nota} />
+          {!editableNota && nota && (
+            <p className="mt-2 text-[0.7rem] text-gris-azul-dim">
+              Escrita en {etiquetaZona(nota.tz)} · archivada en{" "}
+              <Link href="/notas" className="text-laton-claro underline-offset-2 hover:underline">Notas</Link>.
+            </p>
+          )}
+          {editableNota && (
+            <p className="mt-1 text-[0.7rem] text-gris-azul-dim">
+              Editable por 24 h. Después queda guardada en{" "}
+              <Link href="/notas" className="text-laton-claro underline-offset-2 hover:underline">Notas</Link>.
+            </p>
           )}
         </div>
       </div>
