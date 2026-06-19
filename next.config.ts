@@ -6,6 +6,15 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(__dirname),
   },
+  async redirects() {
+    return [
+      {
+        source: "/portfolio",
+        destination: "/portfolio/index.html",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
