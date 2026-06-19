@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Valeria Juri — Portfolio Profesional</title>
+  <meta name="description" content="Portfolio de Valeria Alejandra Juri, Contadora Pública y Magíster en Comercio Internacional. La Rioja, Argentina." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-container">
+    <a href="#inicio" class="nav-logo">VJ</a>
+    <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" role="list">
+      <li><a href="#sobre-mi"      data-i18n="nav.about">Sobre mí</a></li>
+      <li><a href="#experiencia"   data-i18n="nav.exp">Experiencia</a></li>
+      <li><a href="#formacion"     data-i18n="nav.edu">Formación</a></li>
+      <li><a href="#certificaciones" data-i18n="nav.certs">Certificaciones</a></li>
+      <li><a href="#habilidades"   data-i18n="nav.skills">Habilidades</a></li>
+      <li><a href="#distinciones"  data-i18n="nav.dist">Distinciones</a></li>
+      <li><a href="#contacto" class="nav-cta" data-i18n="nav.contact">Contacto</a></li>
+    </ul>
+    <button class="lang-btn" id="langBtn" aria-label="Switch language">EN</button>
+  </div>
+</nav>
+
+<section id="inicio" class="hero">
+  <div class="hero-container">
+    <div class="hero-photo">
+      <img src="Imagenes/fotoperfil_vale.jpeg" alt="Valeria Alejandra Juri" width="250" height="310" />
+    </div>
+    <div class="hero-content">
+      <p class="hero-pretitle s1" data-i18n="hero.pretitle">Portfolio Profesional</p>
+      <h1 class="hero-name s2">Valeria<br />Alejandra Juri</h1>
+      <div class="hero-titles s3">
+        <span data-i18n="hero.title1">Contadora Pública</span>
+        <span class="sep" aria-hidden="true">·</span>
+        <span data-i18n="hero.title2">Magíster en Comercio Internacional</span>
+        <span class="sep" aria-hidden="true">·</span>
+        <span data-i18n="hero.title3">Especialista en Auditoría</span>
+      </div>
+      <p class="hero-tagline s4" data-i18n="hero.tagline">Más de 10 años en gestión financiera, auditoría y comercio internacional. Actualmente Gerente General Administrativo. Perfil analítico en evolución hacia datos y tecnología aplicada a las finanzas.</p>
+      <div class="hero-actions s5">
+        <a href="#contacto" class="btn btn-primary"   data-i18n="hero.btn1">Contactar</a>
+        <a href="#experiencia" class="btn btn-secondary" data-i18n="hero.btn2">Ver experiencia</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sobre-mi" class="section">
+  <div class="container">
+    <h2 class="section-title" data-i18n="about.title">Sobre mí</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p data-i18n="about.p1">Soy Contadora Pública egresada de la Universidad Nacional de La Rioja, con una sólida trayectoria que combina la práctica privada con la experiencia en el sector público. A lo largo de más de una década, me especialicé en contabilidad, auditoría, finanzas corporativas y comercio internacional.</p>
+        <p data-i18n="about.p2">Actualmente me desempeño como <strong>Gerente General Administrativo</strong> en Cerdo de los Llanos S.A.U., liderando las áreas de contabilidad e impuestos, finanzas corporativas, ventas y compras. En paralelo, continúo como <strong>Socio Gerente</strong> de Cresce S.R.L. y mantengo actividad profesional independiente.</p>
+        <p data-i18n="about.p3">Mi formación académica de posgrado incluye especializaciones en auditoría, asesoramiento financiero, dirección ejecutiva y comercio internacional. En los últimos años amplié mi perfil incorporando herramientas de análisis de datos y programación aplicada a las finanzas.</p>
+      </div>
+      <div class="about-stats">
+        <div class="stat">
+          <span class="stat-number" data-target="10" data-prefix="+">+10</span>
+          <span class="stat-label" data-i18n="about.stat1">Años de experiencia</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number" data-target="5">5</span>
+          <span class="stat-label" data-i18n="about.stat2">Títulos de posgrado</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number" data-target="3">3</span>
+          <span class="stat-label" data-i18n="about.stat3">Certificaciones recientes</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experiencia" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title" data-i18n="exp.title">Experiencia</h2>
+    <div class="timeline">
+
+      <div class="timeline-group">
+        <div class="timeline-dot" aria-hidden="true"></div>
+        <div class="timeline-card">
+          <div class="timeline-header">
+            <h3 class="timeline-company">Cerdo de los Llanos S.A.U.</h3>
+            <span class="timeline-location">La Rioja</span>
+          </div>
+          <div class="timeline-roles">
+            <div class="timeline-role"><span class="role-title" data-i18n="exp.role1a">Gerente General Administrativo</span><span class="role-period">jun 2023 – <span data-i18n="exp.present">presente</span></span></div>
+            <div class="timeline-role"><span class="role-title" data-i18n="exp.role1b">Gerente Contable y de Finanzas</span><span class="role-period">may 2022 – may 2023</span></div>
+            <div class="timeline-role"><span class="role-title" data-i18n="exp.role1c">Gerente Contable</span><span class="role-period">ago 2021 – abr 2022</span></div>
+            <div class="timeline-role"><span class="role-title" data-i18n="exp.role1d">Responsable Contable</span><span class="role-period">sep 2020 – jul 2021</span></div>
+          </div>
+          <div class="tags">
+            <span class="tag" data-i18n="exp.tag1a">Contabilidad e Impuestos</span>
+            <span class="tag" data-i18n="exp.tag1b">Finanzas Corporativas</span>
+            <span class="tag" data-i18n="exp.tag1c">Ventas y Compras</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-group">
+        <div class="timeline-dot" aria-hidden="true"></div>
+        <div class="timeline-card">
+          <div class="timeline-header">
+            <h3 class="timeline-company">Cresce S.R.L.</h3>
+            <span class="timeline-location">La Rioja</span>
+          </div>
+          <div class="timeline-roles">
+            <div class="timeline-role"><span class="role-title" data-i18n="exp.role2">Socio Gerente</span><span class="role-period">abr 2018 – <span data-i18n="exp.present">presente</span></span></div>
+          </div>
+          <div class="tags">
+            <span class="tag" data-i18n="exp.tag2a">Administración</span>
+            <span class="tag" data-i18n="exp.tag2b">Gestión</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-group">
+        <div class="timeline-dot" aria-hidden="true"></div>
+        <div class="timeline-card">
+          <div class="timeline-header">
+            <h3 class="timeline-company" data-i18n="exp.company3">Contaduría General de La Provincia</h3>
+            <span class="timeline-location" data-i18n="exp.loc3">Función Ejecutiva Provincial · La Rioja</span>
+          </div>
+          <div class="timeline-roles">
+            <div class="timeline-role"><span class="role-title" data-i18n="exp.role3">Asesor Contable</span><span class="role-period" data-i18n="exp.period3">sep 2013 – actualmente con licencia</span></div>
+          </div>
+          <div class="tags">
+            <span class="tag" data-i18n="exp.tag3a">Contabilidad</span>
+            <span class="tag" data-i18n="exp.tag3b">Ejecución Presupuestaria</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-group">
+        <div class="timeline-dot" aria-hidden="true"></div>
+        <div class="timeline-card">
+          <div class="timeline-header">
+            <h3 class="timeline-company" data-i18n="exp.company4">Actividad Profesional Independiente</h3>
+            <span class="timeline-location">La Rioja</span>
+          </div>
+          <div class="timeline-roles">
+            <div class="timeline-role"><span class="role-title" data-i18n="exp.role4">Contador Público</span><span class="role-period">may 2013 – <span data-i18n="exp.present">presente</span></span></div>
+          </div>
+          <div class="tags">
+            <span class="tag" data-i18n="exp.tag4a">Contabilidad</span>
+            <span class="tag" data-i18n="exp.tag4b">Sueldos</span>
+            <span class="tag" data-i18n="exp.tag4c">Impuestos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-group">
+        <div class="timeline-dot" aria-hidden="true"></div>
+        <div class="timeline-card">
+          <div class="timeline-header">
+            <h3 class="timeline-company">Estudio Contable Ruarte Marcelo y Asociados</h3>
+            <span class="timeline-location">La Rioja</span>
+          </div>
+          <div class="timeline-roles">
+            <div class="timeline-role"><span class="role-title" data-i18n="exp.role5">Contador Público</span><span class="role-period">mar 2013 – <span data-i18n="exp.present">presente</span></span></div>
+          </div>
+          <div class="tags">
+            <span class="tag" data-i18n="exp.tag4a">Contabilidad</span>
+            <span class="tag" data-i18n="exp.tag4b">Sueldos</span>
+            <span class="tag" data-i18n="exp.tag4c">Impuestos</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="formacion" class="section">
+  <div class="container">
+    <h2 class="section-title" data-i18n="edu.title">Formación Académica</h2>
+    <div class="edu-list">
+      <div class="edu-item">
+        <div class="edu-year">2021–2023</div>
+        <div class="edu-body"><span class="edu-badge edu-badge--master" data-i18n="edu.badge1">Maestría</span><h3 class="edu-title" data-i18n="edu.degree1">Magíster en Comercio Internacional</h3><p class="edu-inst">Universidad Nacional de Córdoba</p></div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-year">2020–2021</div>
+        <div class="edu-body"><span class="edu-badge" data-i18n="edu.badge2">Diplomatura</span><h3 class="edu-title" data-i18n="edu.degree2">Diplomatura en Estrategia y Dirección Ejecutiva</h3><p class="edu-inst">Universidad Nacional de Córdoba</p></div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-year">2017–2018</div>
+        <div class="edu-body"><span class="edu-badge" data-i18n="edu.badge3">Diplomatura</span><h3 class="edu-title" data-i18n="edu.degree3">Diplomatura en Asesoramiento Financiero</h3><p class="edu-inst">Universidad Blas Pascal, Córdoba</p></div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-year">2014–2016</div>
+        <div class="edu-body"><span class="edu-badge edu-badge--spec" data-i18n="edu.badge4">Especialización</span><h3 class="edu-title" data-i18n="edu.degree4">Especialista en Contabilidad Superior y Auditoría</h3><p class="edu-inst">Universidad Nacional de Córdoba</p></div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-year">2009–2013</div>
+        <div class="edu-body"><span class="edu-badge edu-badge--degree" data-i18n="edu.badge5">Título Universitario</span><h3 class="edu-title" data-i18n="edu.degree5">Contador Público</h3><p class="edu-inst">Universidad Nacional de La Rioja</p><p class="edu-note" data-i18n="edu.note5">Distinción: Cuerpo de Abanderados y Escoltas 2012</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="certificaciones" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title" data-i18n="cert.title">Certificaciones</h2>
+    <p class="section-sub" data-i18n="cert.sub">Formación continua 2024–2025</p>
+    <div class="certs-grid">
+
+      <div class="cert-card">
+        <div class="cert-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div class="cert-body">
+          <span class="cert-date">Diciembre 2024</span>
+          <h3 class="cert-title" data-i18n="cert.1.title">Data Analytics</h3>
+          <p class="cert-inst">Digital House</p>
+          <p class="cert-desc" data-i18n="cert.1.desc">Análisis de datos, visualización y toma de decisiones basada en datos.</p>
+        </div>
+        <a href="Cetificados/2)%2011-2024%20Data%20Analytics%20-%20Digital%20House.pdf" target="_blank" rel="noopener noreferrer" class="cert-link">
+          <span data-i18n="cert.btn">Ver certificado</span>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4"/><path d="M7.5 8.5l6-6"/></svg>
+        </a>
+      </div>
+
+      <div class="cert-card">
+        <div class="cert-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M7 20V9m4 11V4m4 16v-6m4 6v-3"/></svg></div>
+        <div class="cert-body">
+          <span class="cert-date">Septiembre 2025</span>
+          <h3 class="cert-title" data-i18n="cert.2.title">Especialización en Gestión Gerencial</h3>
+          <p class="cert-inst" data-i18n="cert.2.inst">IAE Business School · Universidad Austral</p>
+          <p class="cert-desc" data-i18n="cert.2.desc">Programa in-company para Boehringer Ingelheim. Estrategia, liderazgo y dirección de equipos.</p>
+        </div>
+        <a href="Cetificados/3)%2009-2025%20Especializaci%C3%B3n%20en%20Gesti%C3%B3n%20Gerencial.pdf" target="_blank" rel="noopener noreferrer" class="cert-link">
+          <span data-i18n="cert.btn">Ver certificado</span>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4"/><path d="M7.5 8.5l6-6"/></svg>
+        </a>
+      </div>
+
+      <div class="cert-card">
+        <div class="cert-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+        <div class="cert-body">
+          <span class="cert-date">Octubre 2025</span>
+          <h3 class="cert-title" data-i18n="cert.3.title">Python para Finanzas</h3>
+          <p class="cert-inst">Universidad del CEMA (UCEMA)</p>
+          <p class="cert-desc" data-i18n="cert.3.desc">40 horas. Programación aplicada a análisis financiero y automatización de procesos.</p>
+        </div>
+        <a href="Cetificados/4)%2010-2025%20Python%20para%20Finanzas%20-%20Universidad%20del%20CEMA.pdf" target="_blank" rel="noopener noreferrer" class="cert-link">
+          <span data-i18n="cert.btn">Ver certificado</span>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4"/><path d="M7.5 8.5l6-6"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="habilidades" class="section">
+  <div class="container">
+    <h2 class="section-title" data-i18n="skills.title">Habilidades</h2>
+    <div class="skills-grid">
+      <div class="skill-group"><h3 class="skill-group-label" data-i18n="skills.g1">Gestión y Dirección</h3><div class="skill-tags"><span class="skill-tag" data-i18n="skills.t1a">Gerencia General</span><span class="skill-tag" data-i18n="skills.t1b">Recursos Humanos</span><span class="skill-tag" data-i18n="skills.t1c">Estrategia Empresarial</span><span class="skill-tag" data-i18n="skills.t1d">Dirección Ejecutiva</span><span class="skill-tag" data-i18n="skills.t1e">Finanzas Corporativas</span></div></div>
+      <div class="skill-group"><h3 class="skill-group-label" data-i18n="skills.g2">Contabilidad y Auditoría</h3><div class="skill-tags"><span class="skill-tag" data-i18n="skills.t2a">Contabilidad Superior</span><span class="skill-tag" data-i18n="skills.t2b">Auditoría</span><span class="skill-tag" data-i18n="skills.t2c">Impuestos</span><span class="skill-tag" data-i18n="skills.t2d">Sueldos</span><span class="skill-tag" data-i18n="skills.t2e">Ajuste por Inflación</span><span class="skill-tag" data-i18n="skills.t2f">Presupuesto Público</span></div></div>
+      <div class="skill-group"><h3 class="skill-group-label" data-i18n="skills.g3">Datos y Tecnología</h3><div class="skill-tags"><span class="skill-tag" data-i18n="skills.t3a">Data Analytics</span><span class="skill-tag" data-i18n="skills.t3b">Python para Finanzas</span><span class="skill-tag" data-i18n="skills.t3c">Análisis de Datos</span><span class="skill-tag" data-i18n="skills.t3d">Microsoft Office</span></div></div>
+      <div class="skill-group"><h3 class="skill-group-label" data-i18n="skills.g4">Sistemas Especializados</h3><div class="skill-tags"><span class="skill-tag">Holistor</span><span class="skill-tag">E-Sidif</span><span class="skill-tag">Tango</span></div></div>
+      <div class="skill-group"><h3 class="skill-group-label" data-i18n="skills.g5">Comercio Internacional</h3><div class="skill-tags"><span class="skill-tag" data-i18n="skills.t5a">Comercio Internacional</span><span class="skill-tag" data-i18n="skills.t5b">Importaciones</span><span class="skill-tag" data-i18n="skills.t5c">Asesoramiento Financiero</span></div></div>
+      <div class="skill-group"><h3 class="skill-group-label" data-i18n="skills.g6">Idiomas</h3><div class="skill-tags"><span class="skill-tag" data-i18n="skills.t6a">Español — nativo</span><span class="skill-tag" data-i18n="skills.t6b">Inglés — intermedio</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="distinciones" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title" data-i18n="dist.title">Distinciones y Actividades</h2>
+    <div class="distinctions">
+      <div class="distinction-item"><span class="distinction-year">2018–2019</span><div class="distinction-body"><h3 data-i18n="dist.1.h">Disertante — Ajuste por Inflación Contable</h3><p data-i18n="dist.1.p">Consejo Profesional de Ciencias Económicas La Rioja (2018) · Consejo Profesional de Ciencias Económicas Sede Chilecito (2018) · Banco Rioja S.A.U. (2019)</p></div></div>
+      <div class="distinction-item"><span class="distinction-year">2020</span><div class="distinction-body"><h3 data-i18n="dist.2.h">Importación de bienes — Cresce S.R.L.</h3><p data-i18n="dist.2.p">Gestión integral del proceso de importación de bienes para la empresa.</p></div></div>
+      <div class="distinction-item"><span class="distinction-year">2012</span><div class="distinction-body"><h3 data-i18n="dist.3.h">Cuerpo de Abanderados y Escoltas</h3><p data-i18n="dist.3.p">Distinción académica por desempeño destacado — Universidad Nacional de La Rioja.</p></div></div>
+      <div class="distinction-item"><span class="distinction-year">2011</span><div class="distinction-body"><h3 data-i18n="dist.4.h">Ayudante de Segunda — Cátedra universitaria</h3><p data-i18n="dist.4.p">Sistemas de Información Contable III, Carrera de Contador Público — Universidad Nacional de La Rioja.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="contacto" class="section">
+  <div class="container">
+    <h2 class="section-title" data-i18n="contact.title">Contacto</h2>
+    <p class="section-sub" data-i18n="contact.sub">¿Querés ponerte en contacto? Escribime o llamame directamente.</p>
+    <div class="contact-grid">
+      <a href="mailto:valeria.juri.vj@gmail.com" class="contact-card"><div class="contact-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><span class="contact-label">Email</span><span class="contact-value">valeria.juri.vj@gmail.com</span></a>
+      <a href="tel:+5403804508434" class="contact-card"><div class="contact-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.64 13.5 19.79 19.79 0 0 1 1.57 4.88 2 2 0 0 1 3.54 2.72h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.3a16 16 0 0 0 5.79 5.79l1.87-1.87a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7a2 2 0 0 1 1.72 2.03z"/></svg></div><span class="contact-label">Teléfono</span><span class="contact-value">(380) 450-8434</span></a>
+      <div class="contact-card contact-card--static"><div class="contact-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div><span class="contact-label" data-i18n="contact.loc.label">Ubicación</span><span class="contact-value">La Rioja, Argentina</span></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p data-i18n="footer.text">© 2025 Valeria Alejandra Juri &nbsp;·&nbsp; Contadora Pública &nbsp;·&nbsp; La Rioja, Argentina</p>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
